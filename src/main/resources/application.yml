@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: lyraWiki
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/wiki
+    username: root
+    password: 365373011
+    driver-class-name: com.mysql.cj.jdbc.Driver
+springdoc:
+  packages-to-scan: com.lyra.wiki.controller
+  
