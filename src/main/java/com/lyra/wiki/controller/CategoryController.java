@@ -1,9 +1,14 @@
 package com.lyra.wiki.controller;
 
 
+import com.lyra.wiki.service.ICategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -13,8 +18,11 @@ import org.springframework.stereotype.Controller;
  * @author lyra
  * @since 2022-02-26
  */
-@Controller
+@RestController
 @RequestMapping("/category")
 public class CategoryController {
+    @Resource
+    private ICategoryService categoryService;
+
 
 }

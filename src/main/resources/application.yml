@@ -8,4 +8,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 springdoc:
   packages-to-scan: com.lyra.wiki.controller
-  
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
