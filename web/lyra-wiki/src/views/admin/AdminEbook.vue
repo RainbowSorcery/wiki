@@ -38,6 +38,9 @@
         <a-form-item label="分类2">
           <a-input v-model:value="sumbitBook.category2Id" />
         </a-form-item>
+        <a-form-item label="分类2">
+          <a-cascader v-model:value="selectCategory.selectedCategoryList" :options="options" placeholder="Please select" />
+        </a-form-item>
         <a-form-item label="描述">
           <a-input v-model:value="sumbitBook.description" />
         </a-form-item>
@@ -47,7 +50,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, onMounted, toRaw,  } from "vue";
+import { defineComponent, ref, reactive, onMounted, toRaw, toRef,  } from "vue";
 import { message } from 'ant-design-vue';
 import axios from "axios";
 
@@ -116,6 +119,11 @@ type ebookObject = {
   voteCount: number | undefined
 }
 
+interface Option {
+  value: string;
+  label: string;
+  children?: Option[];
+}
 
 export default defineComponent({
   name: "AdminEbook",
@@ -164,11 +172,12 @@ export default defineComponent({
       visible.value = true
       sumbitType = 'update'
       axios.get("/ebook/getEbookById?id=" + toRaw(parm).id).then((response) => {
+        selectCategory.selectedCategoryList[0] = response.data.data.category1Id + ""
+        selectCategory.selectedCategoryList[1] = response.data.data.category2Id + ""
+
         sumbitBook.name = response.data.data.name
         sumbitBook.id = response.data.data.id
         sumbitBook.cover = response.data.data.cover
-        sumbitBook.category1Id = response.data.data.category1Id
-        sumbitBook.category2Id = response.data.data.category2Id
         sumbitBook.description = response.data.data.description
       })
     }
@@ -183,6 +192,7 @@ export default defineComponent({
         pageSize: 5,
         pageContditon: ''
       })
+      queryCategoryTreeList()
     })
 
     const setRowKey = (record: ebookObject) => {
@@ -195,7 +205,9 @@ export default defineComponent({
     }
 
     const add = (sumbitBook: ebookObject) => {
-      axios.post("/ebook/addEbook", sumbitBook).then((response) => {
+      sumbitBook.category1Id = Number(selectCategory.selectedCategoryList[0])
+      sumbitBook.category2Id = Number(selectCategory.selectedCategoryList[1])
+      axios.post("/ebook/addEbook", sumbitBook).then(() => {
         message.success(
           '添加成功',
           10,
@@ -204,13 +216,16 @@ export default defineComponent({
     }
 
     const update = (sumbitBook: ebookObject) => {
-      axios.post('/ebook/updateEbook', sumbitBook).then((response) => {
+      sumbitBook.category1Id = Number(selectCategory.selectedCategoryList[0])
+      sumbitBook.category2Id = Number(selectCategory.selectedCategoryList[1])
+      axios.post('/ebook/updateEbook', sumbitBook).then(() => {
         message.success(
           '更新成功',
           10,
         );
       })
     }
+
 
     // 弹出框之后点击ok之后的回调函数
     const handleOk = () => {
@@ -236,6 +251,39 @@ export default defineComponent({
     const queryEbookCondtionList = () => {
       queryEbookList(pagination)
     }
+
+    const options: Option[] = reactive([])
+
+    const queryCategoryTreeList = () => {
+      axios.get("/category/list/tree").then((response) => {
+        const categorys = response.data.data
+        
+        for (let i = 0; i < categorys.length; i++) {
+          const optionsChildren: Option[] = [];
+          const categoryChildren = categorys[i].children
+          
+          for (let i = 0; i < categoryChildren.length; i++) {
+            optionsChildren.push({
+                label: categoryChildren[i].name,
+                value: categoryChildren[i].id,
+                children: undefined
+              })
+          }
+
+          options.push({
+            label: categorys[i].name,
+            value: categorys[i].id,
+            children: optionsChildren
+          })
+        }
+
+      })
+    }
+
+    // 被选中分类列表 Array<string>表示数组
+    const selectCategory = reactive({
+      "selectedCategoryList": Array<string>()
+    })
     
     return {
       ebook,
@@ -243,6 +291,8 @@ export default defineComponent({
       columns,
       pagination,
       visible,
+      options,
+      selectCategory,
       setRowKey,
       regeditEbook,
       handleTableChange,

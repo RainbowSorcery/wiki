@@ -43,7 +43,7 @@ public class EbookController {
     @GetMapping("/list")
     public Result<List<Ebook>> list() {
         List<Ebook> ebookList = ebookService.list();
-        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), ebookList);
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true, ebookList);
     }
 
     @GetMapping("/pageList")
@@ -63,21 +63,21 @@ public class EbookController {
 
         Page<Ebook> ebookPage = ebookService.page(new Page<>(page.getCurrent(), page.getPageSize()), queryWrapper);
 
-        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), ebookPage);
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true, ebookPage);
     }
 
     @GetMapping("/getEbookById")
     public Result<Ebook> getEbookById(Integer id) {
         Ebook byId = ebookService.getById(id);
 
-        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), byId);
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(),true, byId);
     }
 
     @PostMapping("/updateEbook")
     public Result<Object> updateEbook(@RequestBody Ebook ebook) {
         ebookService.updateById(ebook);
 
-        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage());
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
     }
 
     @PostMapping("/addEbook")
@@ -87,6 +87,6 @@ public class EbookController {
         ebook.setVoteCount(0);
         ebookService.save(ebook);
 
-        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage());
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
     }
 }

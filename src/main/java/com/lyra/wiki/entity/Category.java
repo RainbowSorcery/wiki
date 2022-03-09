@@ -1,6 +1,13 @@
 package com.lyra.wiki.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -17,6 +24,8 @@ public class Category implements Serializable {
     /**
      * id
      */
+    @JsonSerialize(using= ToStringSerializer.class)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -33,6 +42,17 @@ public class Category implements Serializable {
      * 顺序
      */
     private Integer sort;
+
+    @TableField(exist = false)
+    private List<Category> children;
+
+    public List<Category> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Category> children) {
+        this.children = children;
+    }
 
     public Long getId() {
         return id;

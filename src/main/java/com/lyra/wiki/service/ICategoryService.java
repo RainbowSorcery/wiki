@@ -3,6 +3,8 @@ package com.lyra.wiki.service;
 import com.lyra.wiki.entity.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 分类 服务类
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ICategoryService extends IService<Category> {
 
+    List<Category> tree();
 }

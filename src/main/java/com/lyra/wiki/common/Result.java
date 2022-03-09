@@ -3,17 +3,20 @@ package com.lyra.wiki.common;
 public class Result<T> {
     private Integer statusCode;
     private String message;
+    private Boolean success;
     private T data;
 
-    public Result(Integer statusCode, String message, T data) {
+    public Result(Integer statusCode, String message, Boolean success) {
         this.statusCode = statusCode;
         this.message = message;
-        this.data = data;
+        this.success = success;
     }
 
-    public Result(Integer statusCode, String message) {
+    public Result(Integer statusCode, String message, Boolean success, T data) {
         this.statusCode = statusCode;
         this.message = message;
+        this.success = success;
+        this.data = data;
     }
 
     public Integer getStatusCode() {
@@ -38,5 +41,13 @@ public class Result<T> {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(Boolean success) {
+        this.success = success;
     }
 }
