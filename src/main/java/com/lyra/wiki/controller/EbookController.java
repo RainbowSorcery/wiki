@@ -89,4 +89,11 @@ public class EbookController {
 
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
     }
+
+    @GetMapping("/getEbookByCategoryId")
+    public Result<List<Ebook>> getEbookByCategoryId(Long id) {
+        List<Ebook> ebookList = ebookService.list(new QueryWrapper<Ebook>().eq("category2_id", id));
+
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(),true, ebookList);
+    }
 }

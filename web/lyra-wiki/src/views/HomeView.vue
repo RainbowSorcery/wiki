@@ -1,7 +1,7 @@
 <script lang="ts">
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons-vue';
 import { StarOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons-vue';
-import { defineComponent, ref, reactive, toRef } from 'vue';
+import { defineComponent, ref, reactive, toRef, onMounted, toRaw } from 'vue';
 import axios from 'axios'
 
 export default defineComponent({
@@ -25,13 +25,47 @@ export default defineComponent({
       eBook.value = response.data.data
       ebboReact.book = response.data.data
     })
+
+    onMounted(() => {
+      getCcategoryTreeList()
+    })
+
+    const titleClick = (e: Event)=> {
+      console.log(e)
+    }
+Event
+    const handleClick = (e: Event) => {
+      if (e.key !== 'welcome') {
+        axios.get("/ebook/getEbookByCategoryId?id=" + e.key).then((response) => {
+          isWelcome.value = false
+          eBook.value = response.data.data
+        })
+      } else {
+          isWelcome.value = true
+      }
+    }
+
+    const isWelcome = ref(true)
+
+    const categoryTreeList = ref()
+
+    const getCcategoryTreeList = () => {
+      axios.get("/category/list/tree").then((response) => {
+        categoryTreeList.value = response.data.data
+      })
+    }
+
     return {
+      isWelcome,
       selectedKeys1: ref<string[]>(['2']),
       selectedKeys2: ref<string[]>(['1']),
       openKeys: ref<string[]>(['sub1']),
+      categoryTreeList,
       eBook,
       reactiveBook: toRef(ebboReact, "book"),
       actions,
+      titleClick,
+      handleClick,
     };
   },
 });
@@ -45,50 +79,36 @@ export default defineComponent({
           v-model:selectedKeys="selectedKeys2"
           v-model:openKeys="openKeys"
           :style="{ height: '100%', borderRight: 0 }"
+          @click="handleClick"
         >
-          <a-sub-menu key="sub1">
-            <template #title>
-              <span>
-                <user-outlined />
-                subnav 1
-              </span>
+      <a-menu-item key="welcome">
+          <template #icon>
+            <PieChartOutlined />
+          </template>
+          <span>欢迎</span>
+        </a-menu-item>
+        <a-sub-menu  @titleClic="titleClick" :key="category.id" v-for="category in categoryTreeList">
+          <template #icon>
+            <MailOutlined />
+          </template>
+          <template #title>{{category.name}}</template>
+          <a-menu-item-group :key="category.id">
+            <template #icon>
+              <QqOutlined />
             </template>
-            <a-menu-item key="1">option1</a-menu-item>
-            <a-menu-item key="2">option2</a-menu-item>
-            <a-menu-item key="3">option3</a-menu-item>
-            <a-menu-item key="4">option4</a-menu-item>
-          </a-sub-menu>
-          <a-sub-menu key="sub2">
-            <template #title>
-              <span>
-                <laptop-outlined />
-                subnav 2
-              </span>
-            </template>
-            <a-menu-item key="5">option5</a-menu-item>
-            <a-menu-item key="6">option6</a-menu-item>
-            <a-menu-item key="7">option7</a-menu-item>
-            <a-menu-item key="8">option8</a-menu-item>
-          </a-sub-menu>
-          <a-sub-menu key="sub3">
-            <template #title>
-              <span>
-                <notification-outlined />
-                subnav 3
-              </span>
-            </template>
-            <a-menu-item key="9">option9</a-menu-item>
-            <a-menu-item key="10">option10</a-menu-item>
-            <a-menu-item key="11">option11</a-menu-item>
-            <a-menu-item key="12">option12</a-menu-item>
-          </a-sub-menu>
+            <a-menu-item :key="child.id" v-for="child in category.children">
+              {{child.name}}
+            </a-menu-item>
+          </a-menu-item-group>
+        </a-sub-menu>
+
         </a-menu>
       </a-layout-sider>
       <a-layout style="padding: 0 24px 24px">
         <a-layout-content
           :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
         >
-          <a-list item-layout="vertical" size="large" :data-source="eBook"  :grid="{ gutter: 20, column: 3 }">
+          <a-list v-if="!isWelcome" item-layout="vertical" size="large" :data-source="eBook"  :grid="{ gutter: 20, column: 3 }">
               <template #renderItem="{ item }">
                 <a-list-item key="item.name">
                   <template #actions>
@@ -106,6 +126,12 @@ export default defineComponent({
                 </a-list-item>
               </template>
             </a-list>
+
+
+            <div class="welcome" v-if="isWelcome">
+              <h1>欢迎使用wiki知识库系统</h1>
+            </div>
+
         </a-layout-content>
 
       </a-layout>
