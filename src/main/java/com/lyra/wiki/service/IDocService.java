@@ -3,6 +3,8 @@ package com.lyra.wiki.service;
 import com.lyra.wiki.entity.Doc;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 文档 服务类
@@ -13,4 +15,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IDocService extends IService<Doc> {
 
+    List<Doc> treeList(Long ebookId);
+
+    List<Doc> getSelectedTreeData(Long id);
+
+    void deleteDoc(Long docId);
 }

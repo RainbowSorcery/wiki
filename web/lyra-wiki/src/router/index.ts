@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AdminEbook from '@/views/admin/AdminEbook.vue'
-import AdminCategoryVue from '@/views/admin/AdminCategory..vue'
+import AdminCategoryVue from '@/views/admin/AdminCategory.vue'
+import AdminDocVue from '@/views/admin/AdminDoc.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +21,11 @@ const router = createRouter({
       path: '/admin/category',
       name: 'AdminCategoryVue',
       component: AdminCategoryVue
+    },
+    {
+      path: '/admin/doc',
+      name: 'AdminDocVue',
+      component: AdminDocVue
     },
     {
       path: '/about',

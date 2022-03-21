@@ -18,6 +18,9 @@
         </template>
         <template #action="{text}" >
           <a-space size="small">
+            <a-button type="primary">
+              <router-link :to="'/admin/doc?ebookId=' + text.id">文档管理</router-link>
+            </a-button>
             <a-button type="primary" @click="regeditEbook(text)">编辑</a-button>
             <a-button danger>删除</a-button>
           </a-space>

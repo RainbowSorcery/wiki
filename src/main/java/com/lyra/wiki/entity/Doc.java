@@ -1,6 +1,9 @@
 package com.lyra.wiki.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -48,6 +51,28 @@ public class Doc implements Serializable {
      * 点赞数
      */
     private Integer voteCount;
+
+    @TableField(exist = false)
+    private List<Doc> children;
+
+    @TableField(exist = false)
+    private Boolean disabled;
+
+    public Boolean getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public List<Doc> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Doc> children) {
+        this.children = children;
+    }
 
     public Long getId() {
         return id;
