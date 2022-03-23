@@ -200,7 +200,7 @@ export default defineComponent({
 
     const callBackSubmitDoc = () => {
       sumbitDoc.ebookId = undefined;
-      sumbitDoc.id = undefined;
+      sumbitDoc.id = "";
       sumbitDoc.parent = undefined;
       sumbitDoc.name = "";
       sumbitDoc.sort = undefined;

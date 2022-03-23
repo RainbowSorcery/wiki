@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import AdminEbook from '@/views/admin/AdminEbook.vue'
 import AdminCategoryVue from '@/views/admin/AdminCategory.vue'
 import AdminDocVue from '@/views/admin/AdminDoc.vue'
+import Doc from '@/views/Doc.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/admin/doc',
       name: 'AdminDocVue',
       component: AdminDocVue
+    },
+    {
+      path: '/doc',
+      name: 'doc',
+      component: Doc
     },
     {
       path: '/about',
