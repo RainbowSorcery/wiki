@@ -20,4 +20,8 @@ public interface IDocService extends IService<Doc> {
     List<Doc> getSelectedTreeData(Long id);
 
     void deleteDoc(Long docId);
+
+    void updateDoc(Doc doc);
+
+    void addDoc(Doc doc);
 }

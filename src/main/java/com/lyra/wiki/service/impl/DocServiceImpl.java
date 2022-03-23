@@ -1,14 +1,18 @@
 package com.lyra.wiki.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.lyra.wiki.entity.Content;
 import com.lyra.wiki.entity.Doc;
+import com.lyra.wiki.mapper.ContentMapper;
 import com.lyra.wiki.mapper.DocMapper;
 import com.lyra.wiki.service.IDocService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -26,6 +30,9 @@ import java.util.stream.Collectors;
 public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocService {
     @Autowired
     private DocMapper docMapper;
+
+    @Autowired
+    private ContentMapper contentMapper;
 
     @Override
     public List<Doc> treeList(Long ebookId) {
@@ -51,7 +58,9 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
         Doc docById = docMapper.selectById(id);
         List<Doc> docs = docMapper.selectList(null);
         List<Doc> disabledDocChildrenList = getChildrenAndSetDisabled(id, docs);
-        docById.setChildren(disabledDocChildrenList);
+        if (disabledDocChildrenList != null) {
+            docById.setChildren(disabledDocChildrenList);
+        }
         docById.setDisabled(true);
 
         List<Doc> collect = treeList(null);
@@ -115,6 +124,33 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
         deleteIds.add(docId);
 
         docMapper.deleteBatchIds(deleteIds);
+
+    }
+
+    @Override
+    @Transactional
+    public void addDoc(Doc doc) {
+        docMapper.insert(doc);
+        Content content = new Content();
+        BeanUtils.copyProperties(doc, content);
+        contentMapper.insert(content);
+    }
+
+    @Override
+    @Transactional
+    public void updateDoc(Doc doc) {
+        docMapper.updateById(doc);
+        Content content = new Content();
+        content.setId(doc.getId());
+        content.setContent(doc.getContent());
+
+        Content selectContent = contentMapper.selectById(content.getId());
+
+        if (selectContent == null) {
+            contentMapper.insert(content);
+        } else {
+            contentMapper.updateById(content);
+        }
 
     }
 

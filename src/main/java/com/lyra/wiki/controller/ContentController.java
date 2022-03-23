@@ -1,9 +1,16 @@
 package com.lyra.wiki.controller;
 
 
+import com.lyra.wiki.common.Result;
+import com.lyra.wiki.common.constant.ResponseEnums;
+import com.lyra.wiki.entity.Content;
+import com.lyra.wiki.service.IContentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -13,8 +20,16 @@ import org.springframework.stereotype.Controller;
  * @author lyra
  * @since 2022-02-26
  */
-@Controller
+@RestController
 @RequestMapping("/content")
 public class ContentController {
+    @Autowired
+    private IContentService contentService;
 
+    @GetMapping("/getContentById")
+    public Result<Content> getContentById(Long id) {
+        Content content = contentService.getById(id);
+
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true, content);
+    }
 }

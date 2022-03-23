@@ -1,6 +1,7 @@
 package com.lyra.wiki.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.io.Serializable;
 import java.util.List;
@@ -53,10 +54,38 @@ public class Doc implements Serializable {
     private Integer voteCount;
 
     @TableField(exist = false)
+    private String content;
+
+    @TableField(exist = false)
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
     private List<Doc> children;
 
     @TableField(exist = false)
     private Boolean disabled;
+
+    @Override
+    public String toString() {
+        return "Doc{" +
+                "id=" + id +
+                ", ebookId=" + ebookId +
+                ", parent=" + parent +
+                ", name='" + name + '\'' +
+                ", sort=" + sort +
+                ", viewCount=" + viewCount +
+                ", voteCount=" + voteCount +
+                ", content='" + content + '\'' +
+                ", children=" + children +
+                ", disabled=" + disabled +
+                '}';
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     public Boolean getDisabled() {
         return disabled;
@@ -124,16 +153,4 @@ public class Doc implements Serializable {
         this.voteCount = voteCount;
     }
 
-    @Override
-    public String toString() {
-        return "Doc{" +
-            "id=" + id +
-            ", ebookId=" + ebookId +
-            ", parent=" + parent +
-            ", name=" + name +
-            ", sort=" + sort +
-            ", viewCount=" + viewCount +
-            ", voteCount=" + voteCount +
-        "}";
-    }
 }

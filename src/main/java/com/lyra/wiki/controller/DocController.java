@@ -63,7 +63,7 @@ public class DocController {
     }
 
     @GetMapping("/getDocById")
-    public Result<Doc> getDocById(Integer id) {
+    public Result<Doc> getDocById(Long id) {
         Doc doc = docService.getById(id);
 
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true, doc);
@@ -91,13 +91,13 @@ public class DocController {
     @PostMapping("/updateDoc")
     public Result<Objects> update(@RequestBody Doc doc) {
 
-        docService.updateById(doc);
+        docService.updateDoc(doc);
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
     }
 
     @PostMapping("/addDoc")
     public Result<Objects> save(@RequestBody Doc doc) {
-        docService.save(doc);
+        docService.addDoc(doc);
 
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
     }
