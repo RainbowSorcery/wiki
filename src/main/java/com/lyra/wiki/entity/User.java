@@ -1,5 +1,8 @@
 package com.lyra.wiki.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
 
 /**
@@ -17,6 +20,7 @@ public class User implements Serializable {
     /**
      * ID
      */
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**

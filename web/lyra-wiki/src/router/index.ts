@@ -4,6 +4,8 @@ import AdminEbook from '@/views/admin/AdminEbook.vue'
 import AdminCategoryVue from '@/views/admin/AdminCategory.vue'
 import AdminDocVue from '@/views/admin/AdminDoc.vue'
 import Doc from '@/views/Doc.vue'
+import AdminUser from '@/views/admin/AdminUser.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +19,11 @@ const router = createRouter({
       path: '/admin/ebook',
       name: 'AdminEbook',
       component: AdminEbook
+    },
+    {
+      path: '/admin/user',
+      name: 'adminUser',
+      component: AdminUser
     },
     {
       path: '/admin/category',

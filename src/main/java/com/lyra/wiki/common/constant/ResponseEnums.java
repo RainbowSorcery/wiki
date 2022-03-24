@@ -2,7 +2,12 @@ package com.lyra.wiki.common.constant;
 
 public enum ResponseEnums {
     OK(200, "成功"),
-    FILED(500, "失败");
+    FILED(500, "失败"),
+    USER_FOUND(501, "用户名已存在"),
+    USERNAME_NOT_UPDATE(502, "用户名不允许修改"),
+    PASSWORD_IS_NOT_MODIFY(503, "密码不允许直接修改,请点击重置密码按钮"),
+    USER_NOT_EXITS(504, "用户不存在"),
+    PASSWORD_CHECK_FILED(505, "密码校验失败");
     private Integer code;
     private String message;
 
