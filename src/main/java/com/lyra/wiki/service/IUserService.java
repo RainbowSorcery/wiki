@@ -2,6 +2,8 @@ package com.lyra.wiki.service;
 
 import com.lyra.wiki.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.lyra.wiki.entity.request.LoginRequest;
+import com.lyra.wiki.entity.vo.LoginVO;
 
 import java.util.List;
 
@@ -16,4 +18,6 @@ import java.util.List;
 public interface IUserService extends IService<User> {
 
     List<User> selectByLoginName(String loginName);
+
+    LoginVO login(LoginRequest loginRequest);
 }

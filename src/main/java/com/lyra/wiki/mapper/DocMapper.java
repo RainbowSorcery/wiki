@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2022-02-26
  */
 public interface DocMapper extends BaseMapper<Doc> {
-
+    void increaseViewCount(Long docId);
 }

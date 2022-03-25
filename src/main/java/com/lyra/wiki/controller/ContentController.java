@@ -28,7 +28,8 @@ public class ContentController {
 
     @GetMapping("/getContentById")
     public Result<Content> getContentById(Long id) {
-        Content content = contentService.getById(id);
+
+        Content content = contentService.getContentById(id);
 
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true, content);
     }

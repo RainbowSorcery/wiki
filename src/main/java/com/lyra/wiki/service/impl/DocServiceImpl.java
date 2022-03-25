@@ -43,14 +43,10 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
         }
         List<Doc> allDocList = docMapper.selectList(queryWrapper);
 
-        List<Doc> collect = allDocList.stream().filter((doc -> {
-            return doc.getParent() == 0;
-        })).peek((doc -> {
+        return allDocList.stream().filter((doc -> doc.getParent() == 0)).peek((doc -> {
             List<Doc> docChild = this.getDocChild(doc, allDocList);
             doc.setChildren(docChild);
         })).collect(Collectors.toList());
-
-        return collect;
     }
 
     @Override
@@ -101,9 +97,7 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
 
     private List<Doc> getDocChild(Doc currentDoc, List<Doc> allDocList) {
         // 碧莲查询
-        return allDocList.stream().filter((doc) -> {
-            return Objects.equals(doc.getParent(), currentDoc.getId());
-        }).peek((doc -> {
+        return allDocList.stream().filter((doc) -> Objects.equals(doc.getParent(), currentDoc.getId())).peek((doc -> {
             List<Doc> docChild = this.getDocChild(doc, allDocList);
             doc.setChildren(docChild);
         })).collect(Collectors.toList());
@@ -134,6 +128,11 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
         Content content = new Content();
         BeanUtils.copyProperties(doc, content);
         contentMapper.insert(content);
+    }
+
+    @Override
+    public void increaseViewCount(Long id) {
+        docMapper.increaseViewCount(id);
     }
 
     @Override

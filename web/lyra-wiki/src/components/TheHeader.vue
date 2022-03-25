@@ -9,30 +9,133 @@
       <a-menu-item key="/">
         <router-link to="/">首页</router-link>
       </a-menu-item>
-      <a-menu-item key="/admin/user">
+      <a-menu-item
+        key="/admin/user"
+        v-if="user.loginName"
+      >
         <router-link to="/admin/user">用户管理</router-link>
       </a-menu-item>
-      <a-menu-item key="/admin/ebook">
+      <a-menu-item
+        key="/admin/ebook"
+        v-if="user.loginName"
+
+      >
         <router-link to="/admin/ebook">电子书管理</router-link>
       </a-menu-item>
-      <a-menu-item key="/admin/category">
+      <a-menu-item
+        key="/admin/category"
+        v-if="user.loginName"
+
+      >
         <router-link to="/admin/category">分类管理</router-link>
+      </a-menu-item>
+
+      <a-menu-item
+        key="/login"
+        v-if="!user.loginName"
+      >
+        <a @click="login">
+          <span>登录</span>
+        </a>
+      </a-menu-item>
+
+      <a-menu-item
+        key="/hello"
+        v-if="user.loginName"
+      >
+        <a>
+          <span>欢迎您, {{user.name}}</span>
+        </a>
+      </a-menu-item>
+      <a-menu-item
+        key="/logout"
+        v-if="user.loginName"
+      >
+        <a @click="logout">
+          <span>退出登录</span>
+        </a>
       </a-menu-item>
       <a-menu-item key="/about">
         <router-link to="/about">关于我们</router-link>
       </a-menu-item>
     </a-menu>
+
+    <a-modal
+      v-model:visible="showLoginView"
+      title="登录"
+      @ok="loginOkHandle"
+    >
+      <a-form :model="loginSubmitObject">
+        <a-form-item label="登录名">
+          <a-input v-model:value="loginSubmitObject.loginName" />
+        </a-form-item>
+        <a-form-item label="密码">
+          <a-input
+            type="password"
+            v-model:value="loginSubmitObject.password"
+          />
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </a-layout-header>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import store from "@/store";
+import { message } from "ant-design-vue";
+import axios from "axios";
+import { defineComponent, ref, computed } from "vue";
 
 export default defineComponent({
-  name: 'the-header'
-})
+  name: "the-header",
+  setup() {
+    const showLoginView = ref(false);
+
+    const loginSubmitObject = ref({
+      loginName: "Lyra",
+      password: "365373011",
+    });
+
+    const user = computed(() => store.state.user);
+
+    const login = () => {
+      showLoginView.value = true;
+    };
+
+    const loginOkHandle = () => {
+      axios.post("/user/login", loginSubmitObject.value).then((response) => {
+        if (response.data.success) {
+          showLoginView.value = false;
+          store.commit("setUser", response.data.data);
+        }
+      });
+    };
+
+    const logout = () => {
+      axios.post("/user/logout/" + store.state.user.token).then((response) => {
+        if (response.data.success) {
+          message.success("退出登录成功");
+          store.commit("setUser", {});
+        } else {
+          message.success("退出登录失败");
+        }
+      });
+    };
+
+    return {
+      showLoginView,
+      loginSubmitObject,
+      user,
+      logout,
+      loginOkHandle,
+      login,
+    };
+  },
+});
 </script>
 
 <style scoped>
-
+.login-menu {
+  float: right !important;
+}
 </style>

@@ -5,6 +5,7 @@ import AdminCategoryVue from '@/views/admin/AdminCategory.vue'
 import AdminDocVue from '@/views/admin/AdminDoc.vue'
 import Doc from '@/views/Doc.vue'
 import AdminUser from '@/views/admin/AdminUser.vue'
+import store from '@/store'
 
 
 const router = createRouter({
@@ -18,22 +19,34 @@ const router = createRouter({
     {
       path: '/admin/ebook',
       name: 'AdminEbook',
-      component: AdminEbook
+      component: AdminEbook,
+      meta: {
+        loginRequire: true
+      }
     },
     {
       path: '/admin/user',
       name: 'adminUser',
-      component: AdminUser
+      component: AdminUser,
+      meta: {
+        loginRequire: true
+      }
     },
     {
       path: '/admin/category',
       name: 'AdminCategoryVue',
-      component: AdminCategoryVue
+      component: AdminCategoryVue,
+      meta: {
+        loginRequire: true
+      }
     },
     {
       path: '/admin/doc',
       name: 'AdminDocVue',
-      component: AdminDocVue
+      component: AdminDocVue,
+      meta: {
+        loginRequire: true
+      }
     },
     {
       path: '/doc',
@@ -51,4 +64,23 @@ const router = createRouter({
   ]
 })
 
+// 路由登录校验 每次路由跳转之前 to 新路由 from旧路由 next路由跳转 如果无参数表示不拦截 跳转下个路由
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(function(item) {
+    return item.meta.loginRequire
+  })) {
+    const loginUser = store.state.user;
+
+    if (loginUser.token === null || loginUser.token === '' || loginUser.token === undefined) {
+      console.log("用户未登录, 路由拦截")
+      next("/")
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
+
 export default router
+

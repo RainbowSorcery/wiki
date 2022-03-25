@@ -9,6 +9,10 @@ spring:
   jackson:
     generator:
       write_numbers_as_strings: true
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 990728
 springdoc:
   packages-to-scan: com.lyra.wiki.controller
 mybatis-plus:

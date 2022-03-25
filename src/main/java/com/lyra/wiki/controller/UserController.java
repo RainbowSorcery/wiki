@@ -5,20 +5,27 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lyra.wiki.common.Result;
 import com.lyra.wiki.common.constant.ResponseEnums;
 import com.lyra.wiki.entity.User;
+import com.lyra.wiki.entity.request.LoginRequest;
+import com.lyra.wiki.entity.vo.LoginVO;
 import com.lyra.wiki.entity.vo.ResetUserPasswordVO;
 import com.lyra.wiki.exception.MyGraceException;
 import com.lyra.wiki.service.IUserService;
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.stereotype.Controller;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -31,8 +38,18 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    private static final String LOGIN_CACHE = "LOGIN_CACHE:";
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @GetMapping("/list")
     public Result<Page<User>> list(Integer current, Integer pageSize, String condition) {
@@ -115,6 +132,29 @@ public class UserController {
         userUpdateWrapper.set("password", BCrypt.hashpw(userPasswordVO.getNewPassword(), BCrypt.gensalt()));
         userUpdateWrapper.eq("id", userPasswordVO.getId());
         userService.update(userUpdateWrapper);
+
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
+    }
+
+    @PostMapping("/login")
+    public Result<LoginVO> login(@RequestBody LoginRequest loginRequest) {
+        LoginVO loginVO = userService.login(loginRequest);
+        String token = UUID.randomUUID().toString();
+        loginVO.setToken(token);
+
+        try {
+            redisTemplate.opsForValue().set(LOGIN_CACHE + token, objectMapper.writeValueAsString(loginVO), 3600 * 24, TimeUnit.SECONDS);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true,loginVO);
+    }
+
+    @PostMapping("/logout/{token}")
+    public Result<Object> logout(@PathVariable String token) {
+        redisTemplate.delete(LOGIN_CACHE + token);
+        log.debug("退出登录成功:{}", token);
 
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
     }
