@@ -84,13 +84,18 @@ public class DocController {
     }
 
     @GetMapping("/getSelectedTreeData")
-    public Result<List<Doc>> getSelectedTreeData(Long id) {
+    public Result<List<Doc>> getSelectedTreeData(Long id, Long ebookId) {
         List<Doc> list = null;
         if (id != null) {
-            list = docService.getSelectedTreeData(id);
+            list = docService.getSelectedTreeData(id, ebookId);
         } else {
-            list = docService.treeList(null);
+            list = docService.treeList(ebookId);
         }
+
+        Doc doc = new Doc();
+        doc.setId(0L);
+        doc.setName("无");
+        list.add(0, doc);
 
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true, list);
     }

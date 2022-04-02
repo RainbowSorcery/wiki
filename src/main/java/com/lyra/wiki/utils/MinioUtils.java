@@ -21,19 +21,22 @@ public class MinioUtils {
     private static final Logger log = LoggerFactory.getLogger(MinioUtils.class);
 
     public String fileUpload(String fileName, InputStream fileInputStream, long size) {
-        MinioClient minioClient =
-                MinioClient.builder()
-                        .endpoint(minioResource.getEndpoint())
-                        .credentials(minioResource.getAccessKey(), minioResource.getSecretKey())
-                        .build();
+
 
         try {
+            MinioClient minioClient =
+                    MinioClient.builder()
+                            .endpoint(minioResource.getEndpoint())
+                            .credentials(minioResource.getAccessKey(), minioResource.getSecretKey())
+                            .build();
             ObjectWriteResponse objectWriteResponse = minioClient.putObject(PutObjectArgs.builder().bucket(minioResource.getBucket()).object(fileName).stream(fileInputStream, size, -1).build());
 
             return minioResource.getEndpoint() + minioResource.getBucket() + "/" + fileName;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("文件上传失败, 错误信息:{}", e.getMessage());
             throw new MyGraceException(ResponseEnums.FILE_UPLOAD_FILED);
         }
+
     }
 }

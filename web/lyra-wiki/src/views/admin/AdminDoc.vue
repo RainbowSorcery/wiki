@@ -159,16 +159,19 @@ export default defineComponent({
 
     let sumbitType = "add";
 
+    const route = useRoute();
+
+
     // 分页查询
     const queryDocList = () => {
-      axios.get("/doc/list/tree").then((response) => {
+      axios.get("/doc/list/tree?ebookId=" + route.query.ebookId).then((response) => {
         Doc.value = response.data.data;
         viewTable.value = true;
       });
     };
 
     const getSelectedTreeDataList = (id?: any) => {
-      axios.get("/doc/getSelectedTreeData?id=" + id).then((response) => {
+      axios.get("/doc/getSelectedTreeData?id=" + id + "&ebookId=" +  route.query.ebookId).then((response) => {
         selectTreeData.selectedData = response.data.data;
       });
     };

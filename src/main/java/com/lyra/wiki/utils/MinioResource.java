@@ -1,6 +1,8 @@
 package com.lyra.wiki.utils;
 
+import io.minio.MinioClient;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,7 @@ public class MinioResource {
     private String accessKey;
     private String secretKey;
     private String bucket;
+
 
     public String getEndpoint() {
         return endpoint;

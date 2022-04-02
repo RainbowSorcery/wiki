@@ -2,6 +2,7 @@ package com.lyra.wiki.common.constant;
 
 public enum ResponseEnums {
     OK(200, "成功"),
+    FILE_UPLOAD_SUCCESS(201, "文件上传成功"),
     FILED(500, "失败"),
     USER_FOUND(501, "用户名已存在"),
     USERNAME_NOT_UPDATE(502, "用户名不允许修改"),
@@ -9,7 +10,8 @@ public enum ResponseEnums {
     USER_NOT_EXITS(504, "用户不存在"),
     PASSWORD_CHECK_FILED(505, "密码校验失败"),
     USER_ALREADY_VOTE(506, "该用户已经点过赞了"),
-    FILE_UPLOAD_FILED(507, "文件上传失败");
+    FILE_UPLOAD_FILED(507, "文件上传失败"),
+    FILE_UPLOAD_MAX_SIZE(508, "文件上传失败,文件大小限制10MB");
     private Integer code;
     private String message;
 

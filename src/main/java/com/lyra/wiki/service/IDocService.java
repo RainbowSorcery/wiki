@@ -17,7 +17,7 @@ public interface IDocService extends IService<Doc> {
 
     List<Doc> treeList(Long ebookId);
 
-    List<Doc> getSelectedTreeData(Long id);
+    List<Doc> getSelectedTreeData(Long docId, Long ebookId);
 
     void deleteDoc(Long docId);
 
