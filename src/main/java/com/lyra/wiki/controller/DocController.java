@@ -4,14 +4,18 @@ package com.lyra.wiki.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyra.wiki.common.Result;
+import com.lyra.wiki.common.constant.RedisConstant;
 import com.lyra.wiki.common.constant.ResponseEnums;
 import com.lyra.wiki.entity.Doc;
 import com.lyra.wiki.service.IDocService;
+import com.lyra.wiki.utils.IpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,6 +32,9 @@ import java.util.Objects;
 public class DocController {
     @Autowired
     private IDocService docService;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @GetMapping("/list/tree")
     public Result<List<Doc>> treeList(Long ebookId) {
@@ -105,6 +112,18 @@ public class DocController {
     @PostMapping("/deleteDoc")
     public Result<Objects> deleteDoc(Long id) {
         docService.deleteDoc(id);
+
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
+    }
+
+    @PostMapping("/increaseVoteCount")
+    public Result<Objects> increaseVoteCount(Long id, HttpServletRequest request) {
+        docService.increaseVoteCount(id);
+
+        String ip = IpUtil.getRemoteIp(request);
+
+        redisTemplate.opsForValue().set(RedisConstant.REDIS_VOTE + ip + ":" + id, ip);
+
 
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
     }

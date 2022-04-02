@@ -1,32 +1,21 @@
 <script lang="ts">
 import {
+  FileOutlined,
   UserOutlined,
-  LaptopOutlined,
-  NotificationOutlined,
 } from "@ant-design/icons-vue";
 import {
-  StarOutlined,
   LikeOutlined,
-  MessageOutlined,
 } from "@ant-design/icons-vue";
 import { defineComponent, ref, reactive, toRef, onMounted } from "vue";
 import axios from "axios";
 
 export default defineComponent({
   components: {
-    UserOutlined,
-    LaptopOutlined,
-    NotificationOutlined,
-    StarOutlined,
+    FileOutlined,
     LikeOutlined,
-    MessageOutlined,
+    UserOutlined,
   },
   setup() {
-    const actions: Record<string, string>[] = [
-      { type: "StarOutlined", text: "156" },
-      { type: "LikeOutlined", text: "156" },
-      { type: "MessageOutlined", text: "2" },
-    ];
     const eBook = ref();
     const ebboReact = reactive({ book: [] });
     axios.get("ebook/list").then((response) => {
@@ -67,13 +56,10 @@ export default defineComponent({
 
     return {
       isWelcome,
-      selectedKeys1: ref<string[]>(["2"]),
       selectedKeys2: ref<string[]>(["1"]),
       openKeys: ref<string[]>(["sub1"]),
       categoryTreeList,
       eBook,
-      reactiveBook: toRef(ebboReact, "book"),
-      actions,
       titleClick,
       handleClick,
     };
@@ -137,14 +123,31 @@ export default defineComponent({
             <a-list-item key="item.name">
               <template #actions>
                 <span
-                  v-for="{ type, text } in actions"
-                  :key="type"
+                  :key="'FileOutlined'"
                 >
                   <component
-                    v-bind:is="type"
+                    v-bind:is="'FileOutlined'"
                     style="margin-right: 8px"
                   />
-                  {{ text }}
+                  {{ item.docCount }}
+                </span>
+                <span
+                  :key="'LikeOutlined'"
+                >
+                  <component
+                    v-bind:is="'LikeOutlined'"
+                    style="margin-right: 8px"
+                  />
+                  {{ item.voteCount }}
+                </span>
+                <span
+                  :key="'UserOutlined'"
+                >
+                  <component
+                    v-bind:is="'UserOutlined'"
+                    style="margin-right: 8px"
+                  />
+                  {{ item.viewCount }}
                 </span>
               </template>
               <a-list-item-meta :description="item.description">

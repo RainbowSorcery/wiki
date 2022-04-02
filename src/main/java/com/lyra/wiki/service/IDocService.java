@@ -26,4 +26,7 @@ public interface IDocService extends IService<Doc> {
     void addDoc(Doc doc);
 
     void increaseViewCount(Long id);
+
+    void increaseVoteCount(Long id);
+
 }

@@ -7,12 +7,12 @@ import com.lyra.wiki.mapper.ContentMapper;
 import com.lyra.wiki.mapper.DocMapper;
 import com.lyra.wiki.service.IDocService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lyra.wiki.websocket.MyWebSocketHandle;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -33,6 +33,9 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
 
     @Autowired
     private ContentMapper contentMapper;
+
+    @Autowired
+    private MyWebSocketHandle webSocketHandle;
 
     @Override
     public List<Doc> treeList(Long ebookId) {
@@ -133,6 +136,18 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
     @Override
     public void increaseViewCount(Long id) {
         docMapper.increaseViewCount(id);
+    }
+
+    @Override
+    public void increaseVoteCount(Long id) {
+        docMapper.increaseVoteCount(id);
+        Doc doc = docMapper.selectById(id);
+
+        // 进行消息推送
+        if (doc != null) {
+            webSocketHandle.sendMessage("文档[" + doc.getName() + "]" + "被成功点赞!");
+        }
+
     }
 
     @Override

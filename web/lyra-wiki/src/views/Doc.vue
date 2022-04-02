@@ -17,8 +17,24 @@
           </a-tree>
         </a-col>
         <a-col :span="18">
-          <div v-html="html">
+          <div>
+            <h2>{{selectContentNode.name}}</h2>
 
+            <div>
+              <span>点赞数:{{selectContentNode.viewCount}}</span> &nbsp; &nbsp;
+              <span>阅读数:{{selectContentNode.voteCount}}</span>
+            </div>
+            <a-divider></a-divider>
+          </div>
+
+          <div v-html="html">
+          </div>
+
+          <div class="vote-div">
+            <a-button type="primary" shape="round" size="large" @click="increaseVoteCount(selectContentNode.id)">
+              <template #icon><LikeTwoTone /></template>
+              点赞: {{selectContentNode.voteCount}}
+            </a-button>
           </div>
         </a-col>
       </a-row>
@@ -28,17 +44,29 @@
 
 <script lang="ts">
 import axios from "axios";
-import { defineComponent, ref, reactive, toRef, onMounted } from "vue";
+import { defineComponent, ref, reactive, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { LikeTwoTone } from '@ant-design/icons-vue';
+import { message } from "ant-design-vue";
 
 export default defineComponent({
   name: "doc-view",
+  components: {
+    LikeTwoTone
+  },
   setup() {
     const docTreeData = ref();
     const viewDocTreeData = ref(false);
     const html = ref();
     const selectedKeys = reactive({
       selectedKeys: Array<string>(),
+    });
+
+    const selectContentNode = ref({
+      id: '',
+      name: '',
+      voteCount: 0,
+      viewCount: 0
     });
 
     const route = useRoute();
@@ -51,14 +79,19 @@ export default defineComponent({
         if (response.data.data != null) {
           selectedKeys.selectedKeys = [response.data.data[0].id];
           selectContentById(response.data.data[0].id);
+          selectContentNode.value = response.data.data[0]
         }
         viewDocTreeData.value = response.data.data.length > 0;
       });
     };
 
     // 查询被选中节点的内容
-    const selectTree = (data: Array<string>) => {
+    const selectTree = (data: Array<string>, info) => {
+      console.log(selectContentNode.value)
+      selectContentNode.value = info.selectedNodes[0].props
+
       if (data.length > 0) {
+          selectedKeys.selectedKeys = [data[0]];
         selectContentById(data[0]);
       }
     };
@@ -73,6 +106,16 @@ export default defineComponent({
       });
     };
 
+    const increaseVoteCount = (docId: string) => {
+      axios.post("/doc/increaseVoteCount/?id=" + docId).then((response) => {
+        if (response.data.success) {
+          selectContentNode.value.voteCount++;
+        } else {
+          message.error(response.data.message)
+        }
+      })
+    }
+
     onMounted(() => {
       selectDocTreeData(route.query.ebookId + "");
     });
@@ -82,11 +125,17 @@ export default defineComponent({
       viewDocTreeData,
       html,
       selectedKeys,
+      selectContentNode,
       selectTree,
+      increaseVoteCount,
     };
   },
 });
 </script>
 
 <style scoped>
+.vote-div {
+  padding: 15px;
+  text-align: center;
+}
 </style>

@@ -13,4 +13,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface DocMapper extends BaseMapper<Doc> {
     void increaseViewCount(Long docId);
+
+    void increaseVoteCount(Long id);
 }
