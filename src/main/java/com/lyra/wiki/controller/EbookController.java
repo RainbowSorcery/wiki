@@ -67,7 +67,7 @@ public class EbookController {
     }
 
     @GetMapping("/getEbookById")
-    public Result<Ebook> getEbookById(Integer id) {
+    public Result<Ebook> getEbookById(Long id) {
         Ebook byId = ebookService.getById(id);
 
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(),true, byId);
@@ -95,5 +95,12 @@ public class EbookController {
         List<Ebook> ebookList = ebookService.list(new QueryWrapper<Ebook>().eq("category2_id", id));
 
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(),true, ebookList);
+    }
+
+    @PostMapping("/delete")
+    public Result<Object> delete(Long ebookId) {
+        ebookService.removeById(ebookId);
+        
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
     }
 }

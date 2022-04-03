@@ -13,11 +13,11 @@ spring:
     host: 127.0.0.1
     port: 6379
     password: 990728
+  servlet:
+    multipart:
+      max-file-size: 10MB
 springdoc:
   packages-to-scan: com.lyra.wiki.controller
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-logging:
-  level:
-    com.lyra.wiki: info

@@ -86,4 +86,12 @@ public class CategoryController {
 
         return true;
     }
+
+    @PostMapping("/delete")
+    public Result<Object> delete(Long categoryId) {
+        // 有问题 分类删除的话 分类下的电子书也会一并删除 这里可以添加MQ
+        categoryService.removeById(categoryId);
+
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
+    }
 }

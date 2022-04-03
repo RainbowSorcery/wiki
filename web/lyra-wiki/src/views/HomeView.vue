@@ -6,14 +6,16 @@ import {
 import {
   LikeOutlined,
 } from "@ant-design/icons-vue";
-import { defineComponent, ref, reactive, toRef, onMounted } from "vue";
+import { defineComponent, ref, reactive, onMounted } from "vue";
 import axios from "axios";
+import TheWelcome from "@/components/TheWelcome.vue";
 
 export default defineComponent({
   components: {
     FileOutlined,
     LikeOutlined,
     UserOutlined,
+    TheWelcome,
   },
   setup() {
     const eBook = ref();
@@ -166,7 +168,7 @@ export default defineComponent({
           class="welcome"
           v-if="isWelcome"
         >
-          <h1>欢迎使用wiki知识库系统</h1>
+          <TheWelcome></TheWelcome>
         </div>
 
       </a-layout-content>

@@ -17,7 +17,7 @@
             <a-button
               type="primary"
               @click="addDoc"
-            >新增电子书</a-button>
+            >新增文档</a-button>
           </a-space>
 
         </p>
@@ -39,11 +39,14 @@
                 @click="regeditDoc(text)"
                 :size="'small'"
               >编辑</a-button>
-              <a-button
-                danger
-                :size="'small'"
-                @click="deleteDoc(text)"
-              >删除</a-button>
+              <a-popconfirm
+                title="确定删除吗?"
+                ok-text="是"
+                cancel-text="否"
+                @confirm="deleteDoc(text)"
+              >
+                <a-button danger>删除</a-button>
+              </a-popconfirm>
             </a-space>
           </template>
         </a-table>
@@ -161,25 +164,33 @@ export default defineComponent({
 
     const route = useRoute();
 
-
     // 分页查询
     const queryDocList = () => {
-      axios.get("/doc/list/tree?ebookId=" + route.query.ebookId).then((response) => {
-        Doc.value = response.data.data;
-        viewTable.value = true;
-      });
+      axios
+        .get("/doc/list/tree?ebookId=" + route.query.ebookId)
+        .then((response) => {
+          Doc.value = response.data.data;
+          viewTable.value = true;
+        });
     };
 
     const getSelectedTreeDataList = (id?: any) => {
-      axios.get("/doc/getSelectedTreeData?id=" + id + "&ebookId=" +  route.query.ebookId).then((response) => {
-        selectTreeData.selectedData = response.data.data;
-      });
+      axios
+        .get(
+          "/doc/getSelectedTreeData?id=" +
+            id +
+            "&ebookId=" +
+            route.query.ebookId
+        )
+        .then((response) => {
+          selectTreeData.selectedData = response.data.data;
+        });
     };
 
     const router = useRoute();
 
     const regeditDoc = (parm: DocObject) => {
-      getContentByDocId(toRaw(parm).id)
+      getContentByDocId(toRaw(parm).id);
       selectTreeData.selectedData = [];
       console.log(parm);
       getSelectedTreeDataList(toRaw(parm).id + "");
@@ -220,7 +231,6 @@ export default defineComponent({
       editor.config.zIndex = 0;
       editor.create();
       queryDocList();
-      getParentDoc();
       getSelectedTreeDataList("");
     });
 
@@ -276,14 +286,6 @@ export default defineComponent({
 
     const queryCondition = ref();
 
-    const parentDoc = ref();
-
-    const getParentDoc = () => {
-      axios.get("/doc/getParentDoc").then((response) => {
-        parentDoc.value = response.data.data;
-      });
-    };
-
     const selectTreeData = reactive({
       selectedData: Array<DocObject>(),
     });
@@ -308,7 +310,6 @@ export default defineComponent({
       columns,
       visible,
       queryCondition,
-      parentDoc,
       setRowKey,
       regeditDoc,
       handleTableChange,

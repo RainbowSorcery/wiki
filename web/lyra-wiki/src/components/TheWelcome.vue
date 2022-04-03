@@ -1,84 +1,162 @@
-<script setup lang="ts">
-import WelcomeItem from './WelcomeItem.vue'
-import DocumentationIcon from './icons/IconDocumentation.vue'
-import ToolingIcon from './icons/IconTooling.vue'
-import EcosystemIcon from './icons/IconEcosystem.vue'
-import CommunityIcon from './icons/IconCommunity.vue'
-import SupportIcon from './icons/IconSupport.vue'
+<template>
+  <div v-if="user">
+    <a-card title="统计数据">
+      <a-row>
+        <a-col :span="6">
+          <a-statistic
+            title="总阅读量"
+            :value="statistic.viewCount"
+            style="margin-right: 50px"
+          />
+        </a-col>
+        <a-col :span="6">
+          <a-statistic
+            title="总点赞数"
+            :value="statistic.voteCount"
+            style="margin-right: 50px"
+          />
+        </a-col>
+        <a-col :span="6">
+          <a-statistic
+            title="今日相较于昨日浏览数增量"
+            :value="statistic.viewIncrease"
+            style="margin-right: 50px"
+          />
+        </a-col>
+        <a-col :span="6">
+          <a-statistic
+            title="今日相较于昨日点赞数增量"
+            :value="statistic.voteIncrease"
+            style="margin-right: 50px"
+          />
+        </a-col>
+      </a-row>
+    </a-card>
+
+    <a-card title="统计数据趋势图">
+      <a-row>
+        <a-col :span="24">
+          <div
+            id="main"
+            :style="{ width: '100%', height: '500px' }"
+          ></div>
+
+        </a-col>
+      </a-row>
+    </a-card>
+
+  </div>
+
+  <div v-else>
+    欢迎使用wiki系统
+  </div>
+</template>
+
+<script lang="ts">
+import store from "@/store";
+import axios from "axios";
+import { defineComponent, onMounted, ref, computed } from "vue";
+
+declare let echarts: any;
+
+export default defineComponent({
+  name: "the-welcome",
+  setup() {
+    const statistic = ref({
+      viewCount: 0,
+      voteCount: 0,
+      voteIncrease: 0,
+      viewIncrease: 0,
+    });
+
+    const user = computed(() => store.state.user);
+
+    const getStatisticData = () => {
+      axios.get("/ebook-snapshot/getSnapshotStatistic").then((response) => {
+        console.log(response.data);
+        statistic.value.viewCount = response.data.data[1].viewCount;
+        statistic.value.voteCount = response.data.data[1].voteCount;
+        statistic.value.viewIncrease = response.data.data[1].viewIncrease;
+        statistic.value.voteIncrease = response.data.data[1].voteIncrease;
+      });
+    };
+
+    const get30DayStatisticData = () => {
+      axios.get("/ebook-snapshot/get-30Statistic").then((response) => {
+        let dataList = [];
+        let viewList = [];
+        let voteList = [];
+
+        // 将30天数据保存至list中 然后插入这先数据
+        for (let i = 0; i < response.data.data.length; i++) {
+          dataList.push(response.data.data[i].date);
+          voteList.push(response.data.data[i].voteCount);
+          viewList.push(response.data.data[i].viewCount);
+        }
+
+        var myChart = echarts.init(document.getElementById('main'));
+
+        const option = {
+          title: {
+            text: "统计数据趋势图",
+          },
+          tooltip: {
+            trigger: "axis",
+          },
+          legend: {
+            data: ["浏览数", "点赞数"],
+          },
+          grid: {
+            left: "3%",
+            right: "4%",
+            bottom: "3%",
+            containLabel: true,
+          },
+          xAxis: {
+            type: "category",
+            boundaryGap: false,
+            data: dataList,
+          },
+          yAxis: {
+            type: "value",
+          },
+          series: [
+            {
+              name: "浏览数",
+              type: "line",
+              stack: "Total",
+              data: viewList,
+            },
+            {
+              name: "点赞数",
+              type: "line",
+              stack: "Total",
+              data: voteList,
+            },
+          ],
+        };
+
+        myChart.setOption(option)
+      });
+    };
+
+    const initchart = () => {
+      // 绘制图表
+    };
+
+    onMounted(() => {
+      getStatisticData();
+      initchart();
+      get30DayStatisticData();
+    });
+
+    return {
+      statistic,
+      user,
+    };
+  },
+});
 </script>
 
-<template>
-  <WelcomeItem>
-    <template #icon>
-      <DocumentationIcon />
-    </template>
-    <template #heading>Documentation</template>
-
-    Vue’s
-    <a target="_blank" href="https://vuejs.org/">official documentation</a>
-    provides you with all information you need to get started.
-  </WelcomeItem>
-
-  <WelcomeItem>
-    <template #icon>
-      <ToolingIcon />
-    </template>
-    <template #heading>Tooling</template>
-
-    This project is served and bundled with
-    <a href="https://vitejs.dev/guide/features.html" target="_blank">Vite</a>. The recommended IDE
-    setup is <a href="https://code.visualstudio.com/" target="_blank">VSCode</a> +
-    <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>. If you need to test
-    your components and web pages, check out
-    <a href="https://www.cypress.io/" target="_blank">Cypress</a> and
-    <a href="https://docs.cypress.io/guides/component-testing/introduction" target="_blank"
-      >Cypress Component Testing</a
-    >.
-
-    <br />
-
-    More instructions are available in <code>README.md</code>.
-  </WelcomeItem>
-
-  <WelcomeItem>
-    <template #icon>
-      <EcosystemIcon />
-    </template>
-    <template #heading>Ecosystem</template>
-
-    Get official tools and libraries for your project:
-    <a target="_blank" href="https://pinia.vuejs.org/">Pinia</a>,
-    <a target="_blank" href="https://router.vuejs.org/">Vue Router</a>,
-    <a target="_blank" href="https://test-utils.vuejs.org/">Vue Test Utils</a>, and
-    <a target="_blank" href="https://github.com/vuejs/devtools">Vue Dev Tools</a>. If you need more
-    resources, we suggest paying
-    <a target="_blank" href="https://github.com/vuejs/awesome-vue">Awesome Vue</a>
-    a visit.
-  </WelcomeItem>
-
-  <WelcomeItem>
-    <template #icon>
-      <CommunityIcon />
-    </template>
-    <template #heading>Community</template>
-
-    Got stuck? Ask your question on
-    <a target="_blank" href="https://chat.vuejs.org">Vue Land</a>, our official Discord server, or
-    <a target="_blank" href="https://stackoverflow.com/questions/tagged/vue.js">StackOverflow</a>.
-    You should also subscribe to
-    <a target="_blank" href="https://news.vuejs.org">our mailing list</a> and follow the official
-    <a target="_blank" href="https://twitter.com/vuejs">@vuejs</a>
-    twitter account for latest news in the Vue world.
-  </WelcomeItem>
-
-  <WelcomeItem>
-    <template #icon>
-      <SupportIcon />
-    </template>
-    <template #heading>Support Vue</template>
-
-    As an independent project, Vue relies on community backing for its sustainability. You can help
-    us by
-    <a target="_blank" href="https://vuejs.org/sponsor/">becoming a sponsor</a>.
-  </WelcomeItem>
-</template>
+<style>
+</style>

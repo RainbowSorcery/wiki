@@ -44,7 +44,16 @@
             type="primary"
             @click="regeditEbook(text)"
           >编辑</a-button>
-          <a-button danger>删除</a-button>
+
+          <a-popconfirm
+            title="确认删除电子书吗？"
+            ok-text="确认"
+            @confirm="deleteEbook(text)"
+            cancel-text="取消"
+          >
+            <a-button danger>删除</a-button>
+
+          </a-popconfirm>
         </a-space>
       </template>
     </a-table>
@@ -158,10 +167,10 @@ type pageObject = {
 };
 
 type ebookObject = {
-  id: number | undefined;
+  id: string;
   name: string;
-  category1Id: number | undefined;
-  category2Id: number | undefined;
+  category1Id: string;
+  category2Id: string;
   description: string;
   cover: string;
   docCount: number | undefined;
@@ -274,16 +283,16 @@ export default defineComponent({
     };
 
     const add = (sumbitBook: ebookObject) => {
-      sumbitBook.category1Id = Number(selectCategory.selectedCategoryList[0]);
-      sumbitBook.category2Id = Number(selectCategory.selectedCategoryList[1]);
+      sumbitBook.category1Id = selectCategory.selectedCategoryList[0];
+      sumbitBook.category2Id = selectCategory.selectedCategoryList[1];
       axios.post("/ebook/addEbook", sumbitBook).then(() => {
         message.success("添加成功", 10);
       });
     };
 
     const update = (sumbitBook: ebookObject) => {
-      sumbitBook.category1Id = Number(selectCategory.selectedCategoryList[0]);
-      sumbitBook.category2Id = Number(selectCategory.selectedCategoryList[1]);
+      sumbitBook.category1Id = selectCategory.selectedCategoryList[0];
+      sumbitBook.category2Id = selectCategory.selectedCategoryList[1];
       axios.post("/ebook/updateEbook", sumbitBook).then(() => {
         message.success("更新成功", 10);
       });
@@ -364,6 +373,12 @@ export default defineComponent({
       console.log(file.file);
     };
 
+    const deleteEbook = (parm: any) => {
+      axios.post("/ebook/delete?ebookId=" + toRaw(parm).id)
+      // 刷新页面
+      location.reload()
+    }
+
     return {
       fileList,
       ebook,
@@ -374,6 +389,7 @@ export default defineComponent({
       options,
       selectCategory,
       fileUploadLoding,
+      deleteEbook,
       setRowKey,
       regeditEbook,
       handleTableChange,
