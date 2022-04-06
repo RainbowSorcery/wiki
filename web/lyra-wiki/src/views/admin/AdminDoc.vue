@@ -57,7 +57,7 @@
             <a-button
               type="primary"
               @click="handleOk"
-            >添加</a-button>
+            >添加/修改</a-button>
           </a-space>
         </p>
 
@@ -96,6 +96,49 @@
               placeholder="排序"
             />
           </a-form-item>
+
+          <p>
+            <a-space size="small">
+              <a-button
+                v-if="sumbitDoc.id"
+                type="primary"
+                @click="openDrawer(sumbitDoc.id)"
+              >历史记录</a-button>
+            </a-space>
+          </p>
+
+          <a-drawer
+            v-model:visible="drawerVisible"
+            class="custom-class"
+            title="历史快照"
+            placement="right"
+            :width="1000"
+          >
+            <a-row>
+              <a-col :span="10">
+                <div
+                  v-bind:key="item.id"
+                  v-for="item in contentSnapshotList.contentSnapshotList"
+                >
+                  <a @click="getContentSnapshotByDocIdAndDate(item.contentId, item.date)">{{item.date}}</a>
+                </div>
+                <p>
+                  <a-space size="small">
+                    <a-button
+                      v-if="contentSapshotData"
+                      type="primary"
+                      @click="rollBackContent()"
+                    >还原到这个版本</a-button>
+                  </a-space>
+                </p>
+              </a-col>
+              <a-col :span="14">
+                <div v-html="contentSapshotData">
+                </div>
+
+              </a-col>
+            </a-row>
+          </a-drawer>
           <a-form-item>
             <div id="content"></div>
           </a-form-item>
@@ -141,6 +184,13 @@ type DocObject = {
   viewCount?: number;
   vote_count?: number;
   content?: string;
+};
+
+type ContentSnashot = {
+  id?: string;
+  date?: string;
+  content?: string;
+  contentId?: string;
 };
 
 export default defineComponent({
@@ -251,7 +301,6 @@ export default defineComponent({
       axios.post("/doc/addDoc", sumbitBook).then(() => {
         message.success("添加成功", 10);
         queryDocList();
-        f;
       });
     };
 
@@ -301,6 +350,65 @@ export default defineComponent({
     // 当表中有请求到数据时 显示表格 添加的原因为 若表中无数据 则无法展开所有表格
     const viewTable = ref(false);
 
+    const drawerVisible = ref(false);
+
+    const contentSnapshotList = reactive({
+      contentSnapshotList: Array<ContentSnashot>(),
+    });
+
+    // 打开快照框的时候向后台根据id搜索快照
+    const openDrawer = (docId: string) => {
+      clearContentSnapshot();
+      axios
+        .get("/content-snapshot/getContentSnapshotByDocId?docId=" + docId)
+        .then((response) => {
+          contentSnapshotList.contentSnapshotList = response.data.data;
+        });
+      drawerVisible.value = true;
+    };
+
+    const contentSapshotData = ref();
+
+    // 被点击的对象
+    let onClickContentSnapshotElement: ContentSnashot  = {
+      contentId: '',
+      date: ''
+    }
+
+    // 根据id和date获取被点击的快照
+    const getContentSnapshotByDocIdAndDate = (docId: any, date: any) => {
+      axios
+        .get(
+          "/content-snapshot/getContentSnapshotByDocIdAndDate?docId=" +
+            docId +
+            "&date=" +
+            date
+        )
+        .then((response) => {
+          onClickContentSnapshotElement.contentId = docId
+          onClickContentSnapshotElement.date = date
+          contentSapshotData.value = response.data.data.content;
+          console.log(response.data);
+        });
+    };
+
+    const clearContentSnapshot = () => {
+      contentSnapshotList.contentSnapshotList = [];
+      contentSapshotData.value = "";
+    };
+
+    const rollBackContent = () => {
+      axios
+        .post(
+          "/content-snapshot/rollBackContent?docId=" + onClickContentSnapshotElement.contentId + "&date=" + onClickContentSnapshotElement.date
+        )
+        .then((response) => {
+          if (response.data.success) {
+            message.success("会滚成功");
+          }
+        });
+    };
+
     return {
       viewTable,
       selectTreeData,
@@ -309,13 +417,19 @@ export default defineComponent({
       sumbitDoc,
       columns,
       visible,
+      contentSapshotData,
+      drawerVisible,
       queryCondition,
+      contentSnapshotList,
+      openDrawer,
       setRowKey,
       regeditDoc,
       handleTableChange,
       handleOk,
       addDoc,
       queryDocCondtionList,
+      getContentSnapshotByDocIdAndDate,
+      rollBackContent,
     };
   },
 });

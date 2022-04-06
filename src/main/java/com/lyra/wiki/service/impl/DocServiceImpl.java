@@ -2,9 +2,11 @@ package com.lyra.wiki.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.lyra.wiki.entity.Content;
+import com.lyra.wiki.entity.ContentSnapshot;
 import com.lyra.wiki.entity.Doc;
 import com.lyra.wiki.mapper.ContentMapper;
 import com.lyra.wiki.mapper.DocMapper;
+import com.lyra.wiki.service.IContentSnapshotService;
 import com.lyra.wiki.service.IDocService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lyra.wiki.websocket.MyWebSocketHandle;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +39,9 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
 
     @Autowired
     private MyWebSocketHandle webSocketHandle;
+
+    @Autowired
+    private IContentSnapshotService contentSnapshotService;
 
     @Override
     public List<Doc> treeList(Long ebookId) {
@@ -113,6 +119,7 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
         List<Doc> docChild = getDocChild(parentDoc, allDoc);
 
         List<Long> deleteIds = new LinkedList<>();
+        // 若此文档有子节点 那么一并删除
         getDeleteIds(docChild, deleteIds);
         // 将父id也一并添加上
         deleteIds.add(docId);
@@ -128,6 +135,11 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
         Content content = new Content();
         BeanUtils.copyProperties(doc, content);
         contentMapper.insert(content);
+
+
+        // 插入时也向快照表中抱保存一份
+        contentSnapshotService.insertContentSnapshot(content.getContent(), doc.getId());
+
     }
 
     @Override
@@ -157,9 +169,13 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
 
         Content selectContent = contentMapper.selectById(content.getId());
 
+        // 插入快照表
+        contentSnapshotService.insertContentSnapshot(selectContent.getContent(), doc.getId());
+
         if (selectContent == null) {
             contentMapper.insert(content);
         } else {
+
             contentMapper.updateById(content);
         }
 
