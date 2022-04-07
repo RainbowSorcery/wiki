@@ -1,12 +1,20 @@
 package com.lyra.wiki.entity.vo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDate;
 
+@Schema(name = "SnapshotStatisticVO", description = "快照中间类")
 public class SnapshotStatisticVO {
+    @Schema(name = "viewCount", description = "浏览数")
     private Long viewCount;
+    @Schema(name = "viewIncrease", description = "点赞数")
     public Long viewIncrease;
+    @Schema(name = "voteCount", description = "浏览增量")
     private Long voteCount;
+    @Schema(name = "voteIncrease", description = "点赞增量")
     private Long voteIncrease;
+    @Schema(name = "date", description = "创建日期")
     private LocalDate date;
 
     public LocalDate getDate() {

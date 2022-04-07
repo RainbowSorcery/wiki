@@ -60,8 +60,10 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
 
     @Override
     public List<Doc> getSelectedTreeData(Long id, Long ebookId) {
+
         Doc docById = docMapper.selectById(id);
         List<Doc> docs = docMapper.selectList(new QueryWrapper<Doc>().eq("ebook_id", ebookId));
+
         List<Doc> disabledDocChildrenList = getChildrenAndSetDisabled(id, docs);
         if (disabledDocChildrenList != null) {
             docById.setChildren(disabledDocChildrenList);
@@ -69,12 +71,9 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
         docById.setDisabled(true);
 
         List<Doc> collect = treeList(ebookId);
-        List<Doc> docs1 = setDoc(collect, docById);
 
 
-
-
-        return docs1;
+        return setDoc(collect, docById);
     }
 
     public List<Doc> setDoc(List<Doc> treeData, Doc disableDoc) {

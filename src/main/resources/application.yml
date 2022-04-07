@@ -2,9 +2,9 @@ spring:
   application:
     name: lyraWiki
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/wiki
+    url: jdbc:mysql://10.0.4.3:3306/wiki
     username: root
-    password: 365373011
+    password: 990728
     driver-class-name: com.mysql.cj.jdbc.Driver
   jackson:
     generator:

@@ -7,6 +7,9 @@ import com.lyra.wiki.entity.Content;
 import com.lyra.wiki.entity.ContentSnapshot;
 import com.lyra.wiki.service.IContentService;
 import com.lyra.wiki.service.IContentSnapshotService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/content-snapshot")
+@Tag(name = "内容快照", description = "内容快照")
 public class ContentSnapshotController {
     @Autowired
     private IContentSnapshotService contentSnapshotService;
@@ -29,6 +33,11 @@ public class ContentSnapshotController {
     private IContentService contentService;
 
     @PostMapping("/rollBackContent")
+    @Operation(description = "回滚快照",
+            summary = "回滚快照", parameters = {
+            @Parameter(name = "docId", description = "文档id"),
+            @Parameter(name = "date", description = "快照日期")
+    })
     @Transactional
     public Result<Object> rollback(Long docId, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date) {
 
@@ -50,6 +59,10 @@ public class ContentSnapshotController {
     }
 
     @GetMapping("/getContentSnapshotByDocId")
+    @Operation(description = "根据文档id查询所有快照",
+            summary = "根据文档id查询所有快照", parameters = {
+            @Parameter(name = "docId", description = "文档id")
+    })
     public Result<List<ContentSnapshot>> getContentSnapshotById(Long docId) {
         QueryWrapper<ContentSnapshot> queryWrapper = new QueryWrapper<>();
 
@@ -59,6 +72,11 @@ public class ContentSnapshotController {
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true, list);
     }
 
+    @Operation(description = "根据文档id和日期查询快照内容",
+            summary = "根据文档id查询所有快照", parameters = {
+            @Parameter(name = "根据文档id和日期查询快照内容", description = "文档id"),
+            @Parameter(name = "date", description = "快照日期")
+    })
     @GetMapping("getContentSnapshotByDocIdAndDate")
     public Result<ContentSnapshot> getContentSnapshotByDocIdAndDate(Long docId, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date) {
         QueryWrapper<ContentSnapshot> queryWrapper = new QueryWrapper<>();

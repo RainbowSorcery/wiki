@@ -1,8 +1,14 @@
 package com.lyra.wiki.common;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(name = "Result", description = "统一返回类")
 public class Result<T> {
+    @Schema(name = "statusCode", description = "状态码")
     private Integer statusCode;
+    @Schema(name = "message", description = "信息")
     private String message;
+    @Schema(name = "success", description = "是否成功")
     private Boolean success;
     private T data;
 

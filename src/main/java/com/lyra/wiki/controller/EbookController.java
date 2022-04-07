@@ -32,7 +32,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/ebook")
-@Tag(name = "ebook", description = "电子书接口")
+@Tag(name = "电子书", description = "电子书接口")
 public class EbookController {
     @Resource
     private IEbookService ebookService;

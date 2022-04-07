@@ -6,6 +6,8 @@ import com.lyra.wiki.common.constant.ResponseEnums;
 import com.lyra.wiki.entity.EbookSnapshot;
 import com.lyra.wiki.entity.vo.SnapshotStatisticVO;
 import com.lyra.wiki.service.IEbookSnapshotService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,11 +27,13 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/ebook-snapshot")
+@Tag(name = "统计快照信息", description = "统计快照信息")
 public class EbookSnapshotController {
     @Autowired
     private IEbookSnapshotService ebookSnapshotService;
 
     @GetMapping("/getSnapshotStatistic")
+    @Operation(description = "")
     public Result<List<SnapshotStatisticVO>> getSnapshotStatistic() {
         List<SnapshotStatisticVO> ebookList = ebookSnapshotService.getStatistic();
 

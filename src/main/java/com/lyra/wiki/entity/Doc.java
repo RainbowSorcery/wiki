@@ -2,6 +2,7 @@ package com.lyra.wiki.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
  * @author lyra
  * @since 2022-02-26
  */
+@Schema(name = "Doc", description = "文档")
 public class Doc implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -21,46 +23,56 @@ public class Doc implements Serializable {
     /**
      * id
      */
+    @Schema(name = "id", description = "文档Id")
     private Long id;
 
     /**
      * 电子书id
      */
+    @Schema(name = "ebookId", description = "电子书id")
     private Long ebookId;
 
     /**
      * 父id
      */
+    @Schema(name = "parent", description = "分类id")
     private Long parent;
 
     /**
      * 名称
      */
+    @Schema(name = "name", description = "文档名称")
     private String name;
 
     /**
      * 顺序
      */
+    @Schema(name = "sort", description = "文档排序")
     private Integer sort;
 
     /**
      * 阅读数
      */
+    @Schema(name = "viewCount", description = "文档阅读数")
     private Integer viewCount;
 
     /**
      * 点赞数
      */
+    @Schema(name = "voteCount", description = "文档点赞数")
     private Integer voteCount;
 
     @TableField(exist = false)
+    @Schema(name = "content", description = "文档内容")
     private String content;
 
     @TableField(exist = false)
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+    @Schema(name = "children", description = "子文档")
     private List<Doc> children;
 
     @TableField(exist = false)
+    @Schema(name = "disabled", description = "是否被禁用")
     private Boolean disabled;
 
     @Override

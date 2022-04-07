@@ -4,6 +4,8 @@ import com.lyra.wiki.common.Result;
 import com.lyra.wiki.common.constant.ResponseEnums;
 import com.lyra.wiki.exception.MyGraceException;
 import com.lyra.wiki.utils.MinioUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import java.io.InputStream;
 import java.util.UUID;
 
 @RequestMapping("/file")
+@Tag(name = "文件相关", description = "文件相关操作")
 @RestController
 public class FileController {
     private static final Logger log = LoggerFactory.getLogger(FileController.class);
@@ -27,6 +30,7 @@ public class FileController {
     private MinioUtils minioUtils;
 
     @PostMapping("/upload")
+    @Operation(description = "文件上传")
     public Result<Object> upload(MultipartFile file) {
         String suffix = "";
         if (StringUtils.isNotBlank(file.getOriginalFilename())) {

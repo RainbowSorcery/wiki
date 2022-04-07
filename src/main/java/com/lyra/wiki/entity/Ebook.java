@@ -2,6 +2,7 @@ package com.lyra.wiki.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.Serializable;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @author lyra
  * @since 2022-02-26
  */
+@Schema(name = "ebook", description = "电子书")
 public class Ebook implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -21,46 +23,55 @@ public class Ebook implements Serializable {
      * id
      */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @Schema(name = "id", description = "电子书id")
     private Long id;
 
     /**
      * 名称
      */
+    @Schema(name = "name", description = "电子书名称")
     private String name;
 
     /**
      * 分类1
      */
+    @Schema(name = "category1Id", description = "一级分类id")
     private Long category1Id;
 
     /**
      * 分类2
      */
+    @Schema(name = "category2Id", description = "二级分类id")
     private Long category2Id;
 
     /**
      * 描述
      */
+    @Schema(name = "description", description = "电子书简介")
     private String description;
 
     /**
      * 封面
      */
+    @Schema(name = "cover", description = "电子书封面")
     private String cover;
 
     /**
      * 文档数
      */
+    @Schema(name = "docCount", description = "电子书文档数")
     private Integer docCount;
 
     /**
      * 阅读数
      */
+    @Schema(name = "viewCount", description = "电子书浏览数")
     private Integer viewCount;
 
     /**
      * 点赞数
      */
+    @Schema(name = "voteCount", description = "电子书点赞数")
     private Integer voteCount;
 
     public Long getId() {
