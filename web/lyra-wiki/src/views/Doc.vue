@@ -86,7 +86,7 @@ export default defineComponent({
     };
 
     // 查询被选中节点的内容
-    const selectTree = (data: Array<string>, info) => {
+    const selectTree = (data: Array<string>, info: any) => {
       console.log(selectContentNode.value)
       selectContentNode.value = info.selectedNodes[0].props
 

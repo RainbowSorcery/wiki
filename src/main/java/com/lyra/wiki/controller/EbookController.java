@@ -39,7 +39,7 @@ public class EbookController {
 
     private static final Logger log = LoggerFactory.getLogger(EbookController.class);
 
-    @Operation(description = "查询电子书列表")
+    @Operation(description = "查询电子书列表", summary = "查询电子书列表")
     @GetMapping("/list")
     public Result<List<Ebook>> list() {
         List<Ebook> ebookList = ebookService.list();
@@ -47,6 +47,8 @@ public class EbookController {
     }
 
     @GetMapping("/pageList")
+    @Operation(description = "分页查询电子书列表",
+            summary = "分页查询电子书列表")
     public Result<Page<Ebook>> pageList(PageRequestVO page, String name) {
         if (page.getPageSize() == null) {
             page.setPageSize(5);
@@ -67,6 +69,8 @@ public class EbookController {
     }
 
     @GetMapping("/getEbookById")
+    @Operation(description = "根据id查询电子书",
+            summary = "根据id查询电子书")
     public Result<Ebook> getEbookById(Long id) {
         Ebook byId = ebookService.getById(id);
 
@@ -74,6 +78,8 @@ public class EbookController {
     }
 
     @PostMapping("/updateEbook")
+    @Operation(description = "更新电子书",
+            summary = "更新电子书")
     public Result<Object> updateEbook(@RequestBody Ebook ebook) {
         ebookService.updateById(ebook);
 
@@ -81,6 +87,8 @@ public class EbookController {
     }
 
     @PostMapping("/addEbook")
+    @Operation(description = "添加电子书",
+            summary = "添加电子书")
     public Result<Object> addEbook(@RequestBody Ebook ebook) {
         ebook.setDocCount(0);
         ebook.setViewCount(0);
@@ -91,6 +99,8 @@ public class EbookController {
     }
 
     @GetMapping("/getEbookByCategoryId")
+    @Operation(description = "根据二级分类id查询电子书",
+            summary = "根据二级分类id查询电子书")
     public Result<List<Ebook>> getEbookByCategoryId(Long id) {
         List<Ebook> ebookList = ebookService.list(new QueryWrapper<Ebook>().eq("category2_id", id));
 
@@ -98,6 +108,8 @@ public class EbookController {
     }
 
     @PostMapping("/delete")
+    @Operation(description = "根据id删除电子书",
+            summary = "根据id删除电子书")
     public Result<Object> delete(Long ebookId) {
         ebookService.removeById(ebookId);
         

@@ -6,10 +6,17 @@ import 'ant-design-vue/dist/antd.css';
 import axios from 'axios';
 import store from './store';
 
-axios.defaults.baseURL = import.meta.env.VITE_SERVER
+axios.defaults.baseURL = "http://10.0.4.3:8080/"
 
-axios.interceptors.request.use(function(config) {
+axios.interceptors.request.use(function (config) {
     const token = store.state.user.token;
+
+    if (!config) {
+        config = {};
+    }
+    if (!config.headers) {
+        config.headers = {};
+    }
 
     if (token !== null && token !== "" && token !== undefined) {
         config.headers.token = token

@@ -76,7 +76,6 @@
             class="avatar-uploader"
             :show-upload-list="false"
             :before-upload="valildFileSuffix"
-            @change="handleChange"
             :customRequest="upload"
           >
             <img
@@ -167,11 +166,11 @@ type pageObject = {
 };
 
 type ebookObject = {
-  id: string;
+  id: string | undefined;
   name: string;
-  category1Id: string;
-  category2Id: string;
-  description: string;
+  category1Id: string | undefined;
+  category2Id: string | undefined;
+  description: string | undefined;
   cover: string;
   docCount: number | undefined;
   viewCount: number | undefined;

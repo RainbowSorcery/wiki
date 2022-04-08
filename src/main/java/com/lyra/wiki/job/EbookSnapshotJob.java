@@ -11,7 +11,6 @@ public class EbookSnapshotJob {
     private IEbookSnapshotService ebookSnapshotService;
 
     @Scheduled(cron = "0 0 */1 * * ?")
-
     public void doSnapshot() {
         ebookSnapshotService.doSnapshot();
     }

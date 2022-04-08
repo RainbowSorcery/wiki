@@ -15,6 +15,9 @@ import com.lyra.wiki.entity.vo.LoginVO;
 import com.lyra.wiki.entity.vo.ResetUserPasswordVO;
 import com.lyra.wiki.exception.MyGraceException;
 import com.lyra.wiki.service.IUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +40,7 @@ import java.util.concurrent.TimeUnit;
  */
 @RestController
 @RequestMapping("/user")
+@Tag(name = "用户", description = "用户接口")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
@@ -52,6 +56,13 @@ public class UserController {
     private ObjectMapper objectMapper;
 
     @GetMapping("/list")
+    @Operation(description = "分页搜索用户列表",
+            summary = "分页搜索用户列表",
+            parameters = {
+            @Parameter(name = "current", description = "当前页"),
+            @Parameter(name = "pageSize", description = "每页条数"),
+            @Parameter(name = "condition", description = "条件")
+    })
     public Result<Page<User>> list(Integer current, Integer pageSize, String condition) {
         if (current == null) {
             current = 0;
@@ -72,6 +83,8 @@ public class UserController {
     }
 
     @PostMapping("/add")
+    @Operation(description = "添加用户",
+            summary = "添加用户")
     public Result<Object> add(@RequestBody User user) {
         List<User> users = userService.selectByLoginName(user.getLoginName());
 
@@ -87,6 +100,8 @@ public class UserController {
     }
 
     @PostMapping("/update")
+    @Operation(description = "更新用户",
+            summary = "更新用户")
     public Result<Object> update(@RequestBody User user) {
         User userById = userService.getById(user.getId());
 
@@ -103,6 +118,9 @@ public class UserController {
     }
 
     @GetMapping("/selectById")
+    @Operation(description = "根据id查询用户",
+            summary = "根据id查询用户",
+            parameters = {@Parameter(name = "id", description = "用户id")})
     public Result<User> selectById(Long id) {
         User user = userService.getById(id);
 
@@ -110,6 +128,9 @@ public class UserController {
     }
 
     @PostMapping("/remove")
+    @Operation(description = "根据id删除用户",
+            summary = "根据id删除用户",
+            parameters = {@Parameter(name = "id", description = "用户id")})
     public Result<Object> remove(Long id) {
         userService.removeById(id);
 
@@ -117,6 +138,8 @@ public class UserController {
     }
 
     @PostMapping("/resetPassword")
+    @Operation(description = "重置用户密码",
+            summary = "重置用户密码")
     public Result<Object> resetPassword(@RequestBody ResetUserPasswordVO userPasswordVO) {
         User user = userService.getById(userPasswordVO.getId());
 
@@ -137,6 +160,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
+    @Operation(description = "登录",
+            summary = "登录")
     public Result<LoginVO> login(@RequestBody LoginRequest loginRequest) {
         LoginVO loginVO = userService.login(loginRequest);
         String token = UUID.randomUUID().toString();
@@ -151,6 +176,8 @@ public class UserController {
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true,loginVO);
     }
 
+    @Operation(description = "退出登录",
+            summary = "退出登录")
     @PostMapping("/logout/{token}")
     public Result<Object> logout(@PathVariable String token) {
         redisTemplate.delete(LOGIN_CACHE + token);

@@ -10,7 +10,7 @@ spring:
     generator:
       write_numbers_as_strings: true
   redis:
-    host: 127.0.0.1
+    host: 10.0.4.3
     port: 6379
     password: 990728
   servlet:

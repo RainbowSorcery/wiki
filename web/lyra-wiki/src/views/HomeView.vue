@@ -33,7 +33,7 @@ export default defineComponent({
       console.log(e);
     };
     Event;
-    const handleClick = (e: Event) => {
+    const handleClick = (e: any) => {
       if (e.key !== "welcome") {
         axios
           .get("/ebook/getEbookByCategoryId?id=" + e.key)

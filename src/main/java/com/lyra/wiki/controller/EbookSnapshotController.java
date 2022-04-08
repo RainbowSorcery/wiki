@@ -33,7 +33,7 @@ public class EbookSnapshotController {
     private IEbookSnapshotService ebookSnapshotService;
 
     @GetMapping("/getSnapshotStatistic")
-    @Operation(description = "")
+    @Operation(description = "获取统计信息")
     public Result<List<SnapshotStatisticVO>> getSnapshotStatistic() {
         List<SnapshotStatisticVO> ebookList = ebookSnapshotService.getStatistic();
 
@@ -41,6 +41,7 @@ public class EbookSnapshotController {
     }
 
     @GetMapping("/get-30Statistic")
+    @Operation(description = "获取30天内统计信息")
     public Result<List<SnapshotStatisticVO>> get30DayStatistic() {
         List<SnapshotStatisticVO> ebookList = ebookSnapshotService.get30Statistic();
 
