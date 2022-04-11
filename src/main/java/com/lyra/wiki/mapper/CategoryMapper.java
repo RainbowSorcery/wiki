@@ -3,6 +3,8 @@ package com.lyra.wiki.mapper;
 import com.lyra.wiki.entity.Category;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+
 /**
  * <p>
  * 分类 Mapper 接口
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface CategoryMapper extends BaseMapper<Category> {
 
+    List<Category> selectCategory();
 }

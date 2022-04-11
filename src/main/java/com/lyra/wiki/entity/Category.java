@@ -53,6 +53,17 @@ public class Category implements Serializable {
     @Schema(name = "children", description = "子分类")
     private List<Category> children;
 
+    @TableField(exist = false)
+    private String parentName;
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
     public List<Category> getChildren() {
         return children;
     }

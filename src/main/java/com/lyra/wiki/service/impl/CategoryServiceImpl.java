@@ -43,7 +43,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         // 判断cache中是否有数据 若无数据则进行保存至redis中 若有则直接返回
         if (StringUtils.isBlank(stringCategoryCache)) {
 
-            List<Category> categories = categoryMapper.selectList(null);
+            List<Category> categories = categoryMapper.selectCategory();
 
             List<Category> collect = categories.stream().filter((category -> {
                 return category.getParent() == 0;

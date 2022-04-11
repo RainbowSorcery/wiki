@@ -90,7 +90,6 @@
 import { defineComponent, ref, reactive, onMounted, toRaw } from "vue";
 import { message } from "ant-design-vue";
 import axios from "axios";
-import useRoute from "@/router";
 
 const columns = [
   {
@@ -102,8 +101,8 @@ const columns = [
   },
   {
     title: "父分类",
-    dataIndex: "parent",
-    key: "parent",
+    dataIndex: "parentName",
+    key: "parentName",
   },
   {
     title: "顺序",
