@@ -116,8 +116,9 @@ export default defineComponent({
           showLoginView.value = false;
           store.commit("setUser", response.data.data);
         } else {
+          // 弹出登录失败消息并刷新验证码
           message.error(response.data.message);
-          
+          flushCaptch()
         }
       });
     };
