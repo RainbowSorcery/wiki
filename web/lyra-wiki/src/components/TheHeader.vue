@@ -18,14 +18,12 @@
       <a-menu-item
         key="/admin/ebook"
         v-if="user.loginName"
-
       >
         <router-link to="/admin/ebook">电子书管理</router-link>
       </a-menu-item>
       <a-menu-item
         key="/admin/category"
         v-if="user.loginName"
-
       >
         <router-link to="/admin/category">分类管理</router-link>
       </a-menu-item>
@@ -75,6 +73,15 @@
             v-model:value="loginSubmitObject.password"
           />
         </a-form-item>
+
+        <a-form-item label="验证码">
+          <a-input
+            type="text"
+            v-model:value="loginSubmitObject.captcha"
+          />
+
+          <img :src="captchaUri" @click="flushCaptch" />
+        </a-form-item>
       </a-form>
     </a-modal>
   </a-layout-header>
@@ -94,6 +101,7 @@ export default defineComponent({
     const loginSubmitObject = ref({
       loginName: "Lyra",
       password: "365373011",
+      captcha: ''
     });
 
     const user = computed(() => store.state.user);
@@ -107,6 +115,9 @@ export default defineComponent({
         if (response.data.success) {
           showLoginView.value = false;
           store.commit("setUser", response.data.data);
+        } else {
+          message.error(response.data.message);
+          
         }
       });
     };
@@ -117,15 +128,28 @@ export default defineComponent({
           message.success("退出登录成功");
           store.commit("setUser", {});
         } else {
-          message.success("退出登录失败");
+          message.error("退出登录失败");
         }
       });
     };
+
+    const captchaUri = ref("http://localhost:8080/captcha")
+
+
+    // 刷新验证码
+    const flushCaptch = () => {
+      axios.get(captchaUri.value).then(() => {
+      captchaUri.value = "http://localhost:8080/captcha?id=" + Math.random() * 10;
+      })
+    }
+
 
     return {
       showLoginView,
       loginSubmitObject,
       user,
+      captchaUri,
+      flushCaptch,
       logout,
       loginOkHandle,
       login,

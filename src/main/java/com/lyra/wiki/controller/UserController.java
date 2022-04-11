@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lyra.wiki.common.Result;
+import com.lyra.wiki.common.constant.RedisConstant;
 import com.lyra.wiki.common.constant.ResponseEnums;
 import com.lyra.wiki.entity.User;
 import com.lyra.wiki.entity.request.LoginRequest;
@@ -163,6 +164,15 @@ public class UserController {
     @Operation(description = "登录",
             summary = "登录")
     public Result<LoginVO> login(@RequestBody LoginRequest loginRequest) {
+        // 对验证码进行校验
+        String captcha = loginRequest.getCaptcha();
+
+        String redisCaptcha = redisTemplate.opsForValue().get(RedisConstant.LOGIN_CAPTCHA_CODE + ":" + captcha);
+
+        if (StringUtils.isBlank(redisCaptcha)) {
+            return new Result<>(ResponseEnums.CAPTCHA_ERROR.getCode(), ResponseEnums.CAPTCHA_ERROR.getMessage(), Boolean.FALSE);
+        }
+
         LoginVO loginVO = userService.login(loginRequest);
         String token = UUID.randomUUID().toString();
         loginVO.setToken(token);

@@ -3,13 +3,23 @@ package com.lyra.wiki.entity.request;
 public class LoginRequest {
     private String loginName;
     private String password;
+    private String captcha;
 
     @Override
     public String toString() {
-        return "LoginVO{" +
+        return "LoginRequest{" +
                 "loginName='" + loginName + '\'' +
                 ", password='" + password + '\'' +
+                ", captcha='" + captcha + '\'' +
                 '}';
+    }
+
+    public String getCaptcha() {
+        return captcha;
+    }
+
+    public void setCaptcha(String captcha) {
+        this.captcha = captcha;
     }
 
     public String getLoginName() {

@@ -11,7 +11,8 @@ public enum ResponseEnums {
     PASSWORD_CHECK_FILED(505, "密码校验失败"),
     USER_ALREADY_VOTE(506, "该用户已经点过赞了"),
     FILE_UPLOAD_FILED(507, "文件上传失败"),
-    FILE_UPLOAD_MAX_SIZE(508, "文件上传失败,文件大小限制10MB");
+    FILE_UPLOAD_MAX_SIZE(508, "文件上传失败,文件大小限制10MB"),
+    CAPTCHA_ERROR(509, "验证码错误");
     private Integer code;
     private String message;
 

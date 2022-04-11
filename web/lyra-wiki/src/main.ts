@@ -6,7 +6,7 @@ import 'ant-design-vue/dist/antd.css';
 import axios from 'axios';
 import store from './store';
 
-axios.defaults.baseURL = "http://10.0.4.3:8080/"
+axios.defaults.baseURL = "http://127.0.0.1:8080/"
 
 axios.interceptors.request.use(function (config) {
     const token = store.state.user.token;
