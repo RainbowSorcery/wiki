@@ -3,6 +3,7 @@ package com.lyra.wiki.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.lyra.wiki.common.Result;
+import com.lyra.wiki.common.constant.RedisConstant;
 import com.lyra.wiki.common.constant.ResponseEnums;
 import com.lyra.wiki.entity.Category;
 import com.lyra.wiki.service.ICategoryService;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
@@ -33,6 +35,9 @@ public class CategoryController {
     @Resource
     private ICategoryService categoryService;
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
     @GetMapping("/list")
     @Operation(description = "查询电子书分类列表",
             summary = "查询电子书分类列表")
@@ -48,19 +53,19 @@ public class CategoryController {
     public Result<List<Category>> tree() {
         List<Category> categories = categoryService.tree();
 
-        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(),true, categories);
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true, categories);
     }
 
     @GetMapping("/getCategoryById")
     @Operation(description = "根据id查询分类",
             summary = "根据id查询分类",
             parameters = {
-            @Parameter(name = "id", description = "分类id")
+                    @Parameter(name = "id", description = "分类id")
             })
     public Result<Category> getCategoryBIyd(Long id) {
         Category byId = categoryService.getById(id);
 
-        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(),true, byId);
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true, byId);
     }
 
     @GetMapping("/getParentCategory")
@@ -69,13 +74,15 @@ public class CategoryController {
     public Result<List<Category>> getParentCategory() {
         List<Category> parentCategory = categoryService.list(new QueryWrapper<Category>().eq("parent", "0"));
 
-        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(),true, parentCategory);
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true, parentCategory);
     }
 
     @PostMapping("/addCategory")
     @Operation(description = "添加分类",
             summary = "添加分类")
     public Result<Object> addCategory(@RequestBody Category category) {
+        // 若进行更新操作 和删除操作 必须将redis中的缓存删除 否则无法保证数据的一致性
+        redisTemplate.delete(RedisConstant.CATEGORY_CACHE);
         categoryService.save(category);
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
     }
@@ -84,16 +91,18 @@ public class CategoryController {
     @Operation(description = "更新分类",
             summary = "更新分类")
     public Result<Object> updateCategory(@RequestBody Category category) {
-        Category oldCategory = categoryService.getById(category.getId());
-        if (examineUpdateOrCategory(oldCategory)) {
-            categoryService.updateById(category);
-            return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
-        }
-        return new Result<>(ResponseEnums.FILED.getCode(), ResponseEnums.FILED.getMessage(), false);
+        // 若进行更新操作 和删除操作 必须将redis中的缓存删除 否则无法保证数据的一致性
+        redisTemplate.delete(RedisConstant.CATEGORY_CACHE);
+
+        categoryService.updateById(category);
+
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
+
     }
 
     /**
      * 校验是否可以更新或添加分类 如果父分类有子元素则不允许进行更新操作
+     *
      * @param category category
      * @return 是否可以更新
      */
@@ -111,6 +120,9 @@ public class CategoryController {
     @Operation(description = "删除分类",
             summary = "删除分类")
     public Result<Object> delete(Long categoryId) {
+        // 若进行更新操作 和删除操作 必须将redis中的缓存删除 否则无法保证数据的一致性
+        redisTemplate.delete(RedisConstant.CATEGORY_CACHE);
+
         // 有问题 分类删除的话 分类下的电子书也会一并删除 这里可以添加MQ
         categoryService.removeById(categoryId);
 
