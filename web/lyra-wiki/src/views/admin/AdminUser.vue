@@ -25,6 +25,11 @@
       @change="handleTableChange"
     >
 
+    <template #account="{text}">
+      <p v-if="text.userType === '0'">管理员</p>
+      <p v-else>普通用户</p>
+    </template>
+
       <template #action="{text}">
         <a-space size="small">
           <a-button
@@ -125,6 +130,10 @@ const columns = [
     title: "密码",
     dataIndex: "password",
     key: "password",
+  },
+  {
+    title: "用户类型",
+    slots: { customRender: "account" },
   },
   {
     title: "action",

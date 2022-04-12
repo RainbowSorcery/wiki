@@ -13,7 +13,7 @@
         key="/admin/user"
         v-if="user.userType === '0'"
       >
-        <router-link to="/admin/user">管理员管理</router-link>
+        <router-link to="/admin/user">用户管理</router-link>
       </a-menu-item>
 
       <a-menu-item
