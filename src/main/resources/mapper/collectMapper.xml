@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyra.wiki.mapper.CollectMapper">
+
+    <select id="selectCollectList" parameterType="java.lang.Long" resultType="com.lyra.wiki.entity.vo.CollectVO">
+        select t1.id, t3.name, t4.name as ebook_name, t4.description, t2.ebook_id as ebook_id
+        from collect_doc t1,
+             doc t2,
+             user t3,
+             (select * from ebook) t4
+        where t1.doc_id = t2.id
+          and t1.user_id = t3.id
+          and t2.ebook_id = t4.id
+          and user_id = #{id}
+    </select>
+</mapper>

@@ -15,6 +15,13 @@
       >
         <router-link to="/admin/user">管理员管理</router-link>
       </a-menu-item>
+
+      <a-menu-item
+        key="/userCollectInfo"
+        v-if="user.loginName"
+      >
+        <router-link to="/userCollectInfo">收藏管理</router-link>
+      </a-menu-item>
       <a-menu-item
         key="/admin/ebook"
         v-if="user.userType === '0'"
@@ -201,7 +208,7 @@ export default defineComponent({
       axios.get(captchaUri.value).then(() => {
         captchaUri.value =
           "http://127.0.0.1:8080/captcha?id=" + Math.random() * 10;
-          loginSubmitObject.value.captcha = ""
+        loginSubmitObject.value.captcha = "";
       });
     };
 
@@ -226,7 +233,7 @@ export default defineComponent({
         axios.post("/user/register", registerObject.value).then((response) => {
           if (response.data.success) {
             message.success("注册成功");
-            showRegisterView.value = false
+            showRegisterView.value = false;
           } else {
             message.error("注册失败," + response.data.message);
           }

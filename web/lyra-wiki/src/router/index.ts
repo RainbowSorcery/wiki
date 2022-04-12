@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import AdminEbook from '@/views/admin/AdminEbook.vue'
 import AdminCategoryVue from '@/views/admin/AdminCategory.vue'
 import AdminDocVue from '@/views/admin/AdminDoc.vue'
+import userCollectInfo from '@/views/UserCollectInfo.vue'
 import Doc from '@/views/Doc.vue'
 import AdminUser from '@/views/admin/AdminUser.vue'
 import store from '@/store'
@@ -60,6 +61,11 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
+    }, 
+    {
+      path: '/userCollectInfo',
+      name: 'userCollectInfo',
+      component: userCollectInfo
     }
   ]
 })
