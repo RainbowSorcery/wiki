@@ -31,10 +31,31 @@
           </div>
 
           <div class="vote-div">
-            <a-button type="primary" shape="round" size="large" @click="increaseVoteCount(selectContentNode.id)">
-              <template #icon><LikeTwoTone /></template>
-              点赞: {{selectContentNode.voteCount}}
-            </a-button>
+            <a-space>
+              <a-button
+                type="primary"
+                shape="round"
+                size="large"
+                @click="increaseVoteCount(selectContentNode.id)"
+              >
+                <template #icon>
+                  <LikeTwoTone />
+                </template>
+                点赞: {{selectContentNode.voteCount}}
+              </a-button>
+              <a-button
+                type="primary"
+                shape="round"
+                size="large"
+                @click="collectDoc(selectContentNode.id)"
+              >
+                <template #icon>
+                  <LikeTwoTone />
+                </template>
+                收藏
+              </a-button>
+            </a-space>
+
           </div>
         </a-col>
       </a-row>
@@ -44,15 +65,16 @@
 
 <script lang="ts">
 import axios from "axios";
-import { defineComponent, ref, reactive, onMounted } from "vue";
+import { defineComponent, ref, reactive, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
-import { LikeTwoTone } from '@ant-design/icons-vue';
+import { LikeTwoTone } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
+import store from "@/store";
 
 export default defineComponent({
   name: "doc-view",
   components: {
-    LikeTwoTone
+    LikeTwoTone,
   },
   setup() {
     const docTreeData = ref();
@@ -63,10 +85,10 @@ export default defineComponent({
     });
 
     const selectContentNode = ref({
-      id: '',
-      name: '',
+      id: "",
+      name: "",
       voteCount: 0,
-      viewCount: 0
+      viewCount: 0,
     });
 
     const route = useRoute();
@@ -79,7 +101,7 @@ export default defineComponent({
         if (response.data.data != null) {
           selectedKeys.selectedKeys = [response.data.data[0].id];
           selectContentById(response.data.data[0].id);
-          selectContentNode.value = response.data.data[0]
+          selectContentNode.value = response.data.data[0];
         }
         viewDocTreeData.value = response.data.data.length > 0;
       });
@@ -87,11 +109,11 @@ export default defineComponent({
 
     // 查询被选中节点的内容
     const selectTree = (data: Array<string>, info: any) => {
-      console.log(selectContentNode.value)
-      selectContentNode.value = info.selectedNodes[0].props
+      console.log(selectContentNode.value);
+      selectContentNode.value = info.selectedNodes[0].props;
 
       if (data.length > 0) {
-          selectedKeys.selectedKeys = [data[0]];
+        selectedKeys.selectedKeys = [data[0]];
         selectContentById(data[0]);
       }
     };
@@ -111,10 +133,47 @@ export default defineComponent({
         if (response.data.success) {
           selectContentNode.value.voteCount++;
         } else {
-          message.error(response.data.message)
+          message.error(response.data.message);
         }
-      })
-    }
+      });
+    };
+
+    const user = computed(() => store.state.user);
+
+    const collectDoc = (docId: any) => {
+      if (
+        user.value.token === null ||
+        user.value.token === "" ||
+        user.value.token === undefined
+      ) {
+        message.error("请登录");
+      } else {
+        axios
+          .get(
+            "/collect/getCollectByDocIdAndUserId?docId=" +
+              docId +
+              "&userId=" +
+              user.value.id
+          )
+          .then((response) => {
+            // 判断文章是否被收藏过
+            if (response.data.data) {
+              axios
+                .post("/collect/addCollect", {
+                  docId: docId,
+                  userId: user.value.id,
+                })
+                .then((response) => {
+                  if (response.data.success) {
+                    message.success("收藏成功");
+                  }
+                });
+            } else {
+              message.error("该文档已被用户收藏过");
+            }
+          });
+      }
+    };
 
     onMounted(() => {
       selectDocTreeData(route.query.ebookId + "");
@@ -128,6 +187,7 @@ export default defineComponent({
       selectContentNode,
       selectTree,
       increaseVoteCount,
+      collectDoc,
     };
   },
 });

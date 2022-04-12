@@ -44,6 +44,17 @@ public class User implements Serializable {
     @Schema(name = "password", description = "密码")
     private String password;
 
+
+    private Short userType;
+
+    public Short getUserType() {
+        return userType;
+    }
+
+    public void setUserType(Short userType) {
+        this.userType = userType;
+    }
+
     public Long getId() {
         return id;
     }

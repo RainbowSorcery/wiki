@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lyra.wiki.common.Result;
 import com.lyra.wiki.common.constant.RedisConstant;
 import com.lyra.wiki.common.constant.ResponseEnums;
+import com.lyra.wiki.common.constant.UserType;
 import com.lyra.wiki.entity.User;
 import com.lyra.wiki.entity.request.LoginRequest;
 import com.lyra.wiki.entity.vo.LoginVO;
@@ -164,14 +165,6 @@ public class UserController {
     @Operation(description = "登录",
             summary = "登录")
     public Result<LoginVO> login(@RequestBody LoginRequest loginRequest) {
-        // 对验证码进行校验
-        String captcha = loginRequest.getCaptcha();
-
-        String redisCaptcha = redisTemplate.opsForValue().get(RedisConstant.LOGIN_CAPTCHA_CODE + ":" + captcha);
-
-        if (StringUtils.isBlank(redisCaptcha)) {
-            return new Result<>(ResponseEnums.CAPTCHA_ERROR.getCode(), ResponseEnums.CAPTCHA_ERROR.getMessage(), Boolean.FALSE);
-        }
 
         LoginVO loginVO = userService.login(loginRequest);
         String token = UUID.randomUUID().toString();
@@ -192,6 +185,15 @@ public class UserController {
     public Result<Object> logout(@PathVariable String token) {
         redisTemplate.delete(LOGIN_CACHE + token);
         log.debug("退出登录成功:{}", token);
+
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
+    }
+
+    @PostMapping("/register")
+    public Result<Object> register(@RequestBody User user) {
+        user.setUserType(UserType.GENERAL_USER.getCode());
+        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+        userService.save(user);
 
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
     }

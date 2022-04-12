@@ -4,6 +4,7 @@ public class LoginRequest {
     private String loginName;
     private String password;
     private String captcha;
+    private Short loginType;
 
     @Override
     public String toString() {
@@ -12,6 +13,14 @@ public class LoginRequest {
                 ", password='" + password + '\'' +
                 ", captcha='" + captcha + '\'' +
                 '}';
+    }
+
+    public Short getLoginType() {
+        return loginType;
+    }
+
+    public void setLoginType(Short loginType) {
+        this.loginType = loginType;
     }
 
     public String getCaptcha() {
