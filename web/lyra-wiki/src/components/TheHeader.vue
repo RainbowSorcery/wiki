@@ -168,7 +168,7 @@ export default defineComponent({
       loginName: "Lyra",
       password: "365373011",
       captcha: "",
-      loginType: 1,
+      loginType: 0,
     });
 
     const user = computed(() => store.state.user);

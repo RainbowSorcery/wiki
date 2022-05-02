@@ -1,10 +1,10 @@
 spring:
   application:
-    name: lyraWiki
+    name: lyra-wiki
   datasource:
     url: jdbc:mysql://10.0.4.3:3306/wiki
     username: root
-    password: 990728
+    password: 365373011
     driver-class-name: com.mysql.cj.jdbc.Driver
   jackson:
     generator:
@@ -12,7 +12,7 @@ spring:
   redis:
     host: 10.0.4.3
     port: 6379
-    password: 990728
+    password: 365373011
   servlet:
     multipart:
       max-file-size: 10MB

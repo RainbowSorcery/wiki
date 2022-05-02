@@ -76,7 +76,7 @@ public class UserController {
 
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(condition)) {
-            queryWrapper.like("name", condition);
+            queryWrapper.like("login_name", condition);
         }
 
         Page<User> userPage = userService.page(new Page<>(current, pageSize), queryWrapper);
@@ -88,6 +88,7 @@ public class UserController {
     @Operation(description = "添加管理员",
             summary = "添加管理员")
     public Result<Object> add(@RequestBody User user) {
+
         // 设置用户状态为管理员
         user.setUserType(UserType.ADMIN_USER.getCode());
         List<User> users = userService.selectByLoginName(user.getLoginName());
@@ -111,6 +112,11 @@ public class UserController {
 
         // 当密码设置为空时，MyBatis Plus啧不会对密码字段进行更新操作，当进行用户信息更新时 避免更新时对密码进行更新
         user.setPassword(null);
+        user.setLoginName(null);
+
+        if (userById == null) {
+            throw new MyGraceException(ResponseEnums.USER_NOT_EXITS);
+        }
 
         if (!Objects.equals(user.getLoginName(), userById.getLoginName())) {
             throw new MyGraceException(ResponseEnums.USERNAME_NOT_UPDATE);
@@ -194,6 +200,12 @@ public class UserController {
 
     @PostMapping("/register")
     public Result<Object> register(@RequestBody User user) {
+        List<User> users = userService.selectByLoginName(user.getLoginName());
+
+        if (users != null && users.size() > 0) {
+            throw new MyGraceException(ResponseEnums.USER_FOUND);
+        }
+
         user.setUserType(UserType.GENERAL_USER.getCode());
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         userService.save(user);

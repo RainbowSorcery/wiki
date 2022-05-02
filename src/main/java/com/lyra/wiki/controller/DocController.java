@@ -1,6 +1,7 @@
 package com.lyra.wiki.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyra.wiki.common.Result;
@@ -178,6 +179,16 @@ public class DocController {
 
 
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
+    }
+
+    public Result<List<Doc>> getDocListByIdAndName(Long ebookId, String name) {
+        QueryWrapper<Doc> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("name", name);
+        queryWrapper.eq("ebook_id", ebookId);
+
+        List<Doc> list = docService.list(queryWrapper);
+
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true, list);
     }
 
 }

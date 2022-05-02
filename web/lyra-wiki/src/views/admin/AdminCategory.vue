@@ -2,15 +2,7 @@
   <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
     <p>
       <a-space size="small">
-        <a-input
-          size="small"
-          v-model:value="queryCondition"
-          placeholder="small size"
-        />
-        <a-button
-          type="primary"
-          @click="queryCategoryCondtionList"
-        >查询</a-button>
+
         <a-button
           type="primary"
           @click="addCategory"
@@ -219,11 +211,8 @@ export default defineComponent({
       }
     };
 
-    const queryCategoryCondtionList = () => {
-      queryCategoryList();
-    };
 
-    const queryCondition = ref();
+
 
     const parentCategory = ref();
 
@@ -245,7 +234,6 @@ export default defineComponent({
       sumbitCategory,
       columns,
       visible,
-      queryCondition,
       parentCategory,
       deleteCategory,
       setRowKey,
@@ -253,7 +241,6 @@ export default defineComponent({
       handleTableChange,
       handleOk,
       addCategory,
-      queryCategoryCondtionList,
     };
   },
 });

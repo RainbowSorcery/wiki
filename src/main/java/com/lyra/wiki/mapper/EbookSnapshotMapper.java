@@ -18,7 +18,7 @@ public interface EbookSnapshotMapper extends BaseMapper<EbookSnapshot> {
     /**
      * 初始化快照信息
      */
-    void initEbookSnapshot();
+        void initEbookSnapshot();
 
     /**
      * 将今日点赞数和今日浏览数统计到数据库中
