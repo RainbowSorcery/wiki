@@ -21,8 +21,6 @@ public class MinioUtils {
     private static final Logger log = LoggerFactory.getLogger(MinioUtils.class);
 
     public String fileUpload(String fileName, InputStream fileInputStream, long size) {
-
-
         try {
             MinioClient minioClient =
                     MinioClient.builder()
@@ -37,6 +35,5 @@ public class MinioUtils {
             log.error("文件上传失败, 错误信息:{}", e.getMessage());
             throw new MyGraceException(ResponseEnums.FILE_UPLOAD_FILED);
         }
-
     }
 }

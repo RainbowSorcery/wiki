@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lyra.wiki.websocket.MyWebSocketHandle;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -147,6 +148,7 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements IDocS
     }
 
     @Override
+    @Async
     public void increaseVoteCount(Long id) {
         docMapper.increaseVoteCount(id);
         Doc doc = docMapper.selectById(id);

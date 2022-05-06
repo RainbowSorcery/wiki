@@ -44,7 +44,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      webSocket = new WebSocket("ws://121.43.14.176:8080/websocket/" + uuidv4());
+      webSocket = new WebSocket("ws://127.0.0.1:8080/websocket/" + uuidv4());
       initWebsocket();
     });
     return {

@@ -5,7 +5,7 @@
         <a-input
           size="small"
           v-model:value="queryCondition"
-          placeholder="small size"
+          placeholder="请输入用户昵称"
         />
         <a-button
           type="primary"
@@ -306,7 +306,7 @@ export default defineComponent({
     const resetPassword = (parm: resetPasswordVO) => {
       axios.post("/user/resetPassword", parm).then((response) => {
         if (response.data.success) {
-          message.success("删除成功", 10);
+          message.success("修改成功", 10);
         } else {
           message.error(response.data.message, 10);
         }

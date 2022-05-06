@@ -76,7 +76,7 @@ public class UserController {
 
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(condition)) {
-            queryWrapper.like("login_name", condition);
+            queryWrapper.like("name", condition);
         }
 
         Page<User> userPage = userService.page(new Page<>(current, pageSize), queryWrapper);
@@ -110,7 +110,7 @@ public class UserController {
     public Result<Object> update(@RequestBody User user) {
         User userById = userService.getById(user.getId());
 
-        // 当密码设置为空时，MyBatis Plus啧不会对密码字段进行更新操作，当进行用户信息更新时 避免更新时对密码进行更新
+        // 当密码设置为空时，MyBatis Plus不会对密码字段进行更新操作，当进行用户信息更新时 避免更新时对密码进行更新
         user.setPassword(null);
         user.setLoginName(null);
 
@@ -118,12 +118,7 @@ public class UserController {
             throw new MyGraceException(ResponseEnums.USER_NOT_EXITS);
         }
 
-        if (!Objects.equals(user.getLoginName(), userById.getLoginName())) {
-            throw new MyGraceException(ResponseEnums.USERNAME_NOT_UPDATE);
-        }  else {
-            userService.updateById(user);
-        }
-
+        userService.updateById(user);
 
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
     }

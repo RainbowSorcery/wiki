@@ -29,36 +29,24 @@ public class AdminInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String token = request.getHeader("token");
-
         if (StringUtils.isBlank(token)) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return false;
         }
-
-
-
         String result = redisTemplate.opsForValue().get(LOGIN_CACHE + token);
-
-
         if (StringUtils.isBlank(result)) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return false;
         }
-
         try {
             User user = objectMapper.readValue(result, User.class);
-
             if (!Objects.equals(UserType.ADMIN_USER.getCode(), user.getUserType())) {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
-
                 return false;
             }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
-
-
         return true;
     }
 

@@ -36,13 +36,9 @@ public class FileController {
         if (StringUtils.isNotBlank(file.getOriginalFilename())) {
             suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
         }
-
-
         try {
             InputStream fileInputStream = file.getInputStream();
-
             String fileUrl = minioUtils.fileUpload(UUID.randomUUID().toString() + suffix, fileInputStream, file.getSize());
-
             return new Result<>(ResponseEnums.FILE_UPLOAD_SUCCESS.getCode(), ResponseEnums.FILE_UPLOAD_SUCCESS.getMessage(), true, fileUrl);
         } catch (IOException e) {
             e.printStackTrace();
