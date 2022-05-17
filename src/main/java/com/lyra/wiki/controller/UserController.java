@@ -13,6 +13,7 @@ import com.lyra.wiki.common.constant.ResponseEnums;
 import com.lyra.wiki.common.constant.UserType;
 import com.lyra.wiki.entity.User;
 import com.lyra.wiki.entity.request.LoginRequest;
+import com.lyra.wiki.entity.vo.ForgetPasswordVO;
 import com.lyra.wiki.entity.vo.LoginVO;
 import com.lyra.wiki.entity.vo.ResetUserPasswordVO;
 import com.lyra.wiki.exception.MyGraceException;
@@ -153,14 +154,30 @@ public class UserController {
             throw new MyGraceException(ResponseEnums.USER_NOT_EXITS);
         }
 
-        if (!BCrypt.checkpw(userPasswordVO.getOldPassword(), user.getPassword())) {
-            throw new MyGraceException(ResponseEnums.PASSWORD_CHECK_FILED);
-        }
-
         UpdateWrapper<User> userUpdateWrapper = new UpdateWrapper<>();
         userUpdateWrapper.set("password", BCrypt.hashpw(userPasswordVO.getNewPassword(), BCrypt.gensalt()));
         userUpdateWrapper.eq("id", userPasswordVO.getId());
         userService.update(userUpdateWrapper);
+
+        return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
+    }
+
+    @PostMapping("/forgetPassword")
+    public Result<Object> forgetPassword(@RequestBody ForgetPasswordVO forgetPasswordVO) {
+        User user = userService.getOne(new QueryWrapper<User>().eq("login_name", forgetPasswordVO.getLoginName()));
+        if (user == null) {
+            return new Result<>(ResponseEnums.USER_NOT_EXITS.getCode(), ResponseEnums.USER_NOT_EXITS.getMessage(), false);
+        }
+
+
+        if (!BCrypt.checkpw(forgetPasswordVO.getOldPassword(), user.getPassword())) {
+            throw new MyGraceException(ResponseEnums.PASSWORD_CHECK_FILED);
+        }
+
+        UpdateWrapper<User> userUpdateWrapper = new UpdateWrapper<>();
+        userUpdateWrapper.set("password", BCrypt.hashpw(forgetPasswordVO.getNewPassword(), BCrypt.gensalt()));
+        userUpdateWrapper.eq("id", user.getId());
+        userService.update(user, userUpdateWrapper);
 
         return new Result<>(ResponseEnums.OK.getCode(), ResponseEnums.OK.getMessage(), true);
     }

@@ -92,9 +92,6 @@
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 14 }"
       >
-        <a-form-item label="旧密码">
-          <a-input v-model:value="submitResetPasswordObject.resetPaswordVO.oldPassword" />
-        </a-form-item>
         <a-form-item label="新密码">
           <a-input v-model:value="submitResetPasswordObject.resetPaswordVO.newPassword" />
         </a-form-item>
@@ -222,7 +219,6 @@ export default defineComponent({
     const submitResetPasswordObject = reactive({
       resetPaswordVO: {
         id: "",
-        newPassword: "",
         oldPassword: "",
       },
     });

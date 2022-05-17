@@ -24,22 +24,24 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
 
         registry.addInterceptor(voteInterceptor)
+                .excludePathPatterns("/user/forgetPassword")
                 .addPathPatterns("/doc/increaseVoteCount/**");
 
         registry.addInterceptor(userInterceptor)
                 .addPathPatterns("/collect/**")
                 .addPathPatterns("/user/logout/**")
-                .excludePathPatterns("/captcha");
+                .excludePathPatterns("/user/forgetPassword")
+                .excludePathPatterns("/captcha")    ;
 
         registry.addInterceptor(adminInterceptor)
                 .addPathPatterns("/**")
+                .excludePathPatterns("/user/forgetPassword")
                 .excludePathPatterns("/swagger-ui/**")
                 .excludePathPatterns("/bus/v3/api-docs/**")
                 .excludePathPatterns("/v3/api-docs/**")
                 .excludePathPatterns("/ebook/list")
                 .excludePathPatterns("/category/list/tree")
                 .excludePathPatterns("/ebook/getEbookByCategoryId")
-                .excludePathPatterns("/doc/list/tree")
                 .excludePathPatterns("/content/getContentById")
                 .excludePathPatterns("/user/login")
                 .excludePathPatterns("/user/logout/**")

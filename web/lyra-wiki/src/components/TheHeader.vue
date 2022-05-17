@@ -107,6 +107,8 @@
             :src="captchaUri"
             @click="flushCaptch"
           />
+
+          <a @click="showResetPasswordModelView">忘记密码</a>
         </a-form-item>
       </a-form>
     </a-modal>
@@ -146,6 +148,29 @@
             :src="captchaUri"
             @click="flushCaptch"
           />
+
+        </a-form-item>
+      </a-form>
+    </a-modal>
+
+    <a-modal
+        title="Title"
+        v-model:visible="forgetPasswordModel"
+        @ok="forgetPasswordCommit"
+    >
+      <a-form
+          :model="fogetPasswordVO"
+          :label-col="{ span: 4 }"
+          :wrapper-col="{ span: 14 }"
+      >
+        <a-form-item label="登录名">
+          <a-input  v-model:value="fogetPasswordVO.loginName" />
+        </a-form-item>
+        <a-form-item label="旧密码">
+          <a-input type="password" v-model:value="fogetPasswordVO.oldPassword" />
+        </a-form-item>
+        <a-form-item label="新密码">
+          <a-input type="password" v-model:value="fogetPasswordVO.newPassword" />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -170,6 +195,29 @@ export default defineComponent({
       captcha: "",
       loginType: 0,
     });
+
+    const fogetPasswordVO = ref({
+      "loginName": "",
+      "oldPassword": "",
+      "newPassword": ""
+    })
+
+    const forgetPasswordModel = ref(false);
+
+    const showResetPasswordModelView = () => {
+      forgetPasswordModel.value = true
+    }
+
+    const forgetPasswordCommit = () => {
+      axios.post("/user/forgetPassword", fogetPasswordVO.value).then((response) => {
+        if (response.data.success) {
+          message.success(response.data.message);
+          forgetPasswordModel.value = false
+        } else {
+          message.error(response.data.message)
+        }
+      })
+    }
 
     const user = computed(() => store.state.user);
 
@@ -256,6 +304,10 @@ export default defineComponent({
       login,
       viewRegisterModel,
       register,
+      fogetPasswordVO,
+      forgetPasswordModel,
+      showResetPasswordModelView,
+      forgetPasswordCommit,
     };
   },
 });
