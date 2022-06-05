@@ -2,7 +2,7 @@ spring:
   application:
     name: lyra-wiki
   datasource:
-    url: jdbc:mysql://10.0.4.3:3306/wiki
+    url: jdbc:mysql://121.4.39.168:3306/wiki
     username: root
     password: 365373011
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -10,7 +10,7 @@ spring:
     generator:
       write_numbers_as_strings: true
   redis:
-    host: 10.0.4.3
+    host: 121.4.39.168
     port: 6379
     password: 365373011
   servlet:
@@ -18,8 +18,12 @@ spring:
       max-file-size: 10MB
   thymeleaf:
     cache: false
+  boot:
+    admin:
+      client:
+        url: http://localhost:7000
 springdoc:
   packages-to-scan: com.lyra.wiki.controller
-mybatis-plus:
+mybatis-plus: 
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

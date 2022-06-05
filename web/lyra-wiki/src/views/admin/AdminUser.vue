@@ -220,6 +220,7 @@ export default defineComponent({
       resetPaswordVO: {
         id: "",
         oldPassword: "",
+        newPassword: "",
       },
     });
 
